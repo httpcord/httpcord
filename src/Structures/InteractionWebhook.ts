@@ -1,0 +1,36 @@
+import { Interaction, Webhook } from ".";
+import APIManager from "../API";
+import {
+  APIMessage,
+  RESTPatchAPIWebhookWithTokenMessageJSONBody as JSONEditWebhook,
+} from "../Types";
+
+export class InteractionWebhook extends Webhook {
+  constructor(api: APIManager, interaction: Interaction) {
+    super(
+      api,
+      {
+        id: interaction.id,
+        type: 3,
+        application_id: interaction.applicationId,
+      },
+      interaction.token
+    );
+  }
+
+  async getOriginal() {
+    const data = await this.api.post(`${this.url}/messages/@original`);
+    return data.data as APIMessage;
+  }
+
+  async editOriginal(d: JSONEditWebhook) {
+    const data = await this.api.patch(`${this.url}/messages/@original`, d);
+    return data.data as APIMessage;
+  }
+
+  async deleteOriginal() {
+    await this.api.delete(`${this.url}/messages/@original`);
+  }
+}
+
+InteractionWebhook.fromToken(new APIManager(), "test", "test");
