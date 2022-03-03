@@ -21,7 +21,7 @@ export class MessageComponentInteraction extends Interaction {
   /** Whether the interaction has been deferred. */
   deferred = false;
   /** Whether the original response/deferral was ephemeral or not. */
-  ephemeral = null;
+  ephemeral?: boolean;
 
   constructor(server: InteractionServer, data: APIMessageComponentInteraction) {
     super(server, data);
@@ -31,6 +31,15 @@ export class MessageComponentInteraction extends Interaction {
     if (data.data.component_type === 3) this.selected = data.data.values;
 
     this.webhook = new InteractionWebhook(this.api, this);
+  }
+
+  /**
+   * Defers the interaction. The user sees a "loading" state.
+   */
+  defer(ephemeral?: boolean) {
+    this.deferred = true;
+    this.ephemeral = ephemeral || false;
+    this.response = { type: 5, data: { flags: ephemeral ? 64 : 0 } };
   }
 
   /**
@@ -61,6 +70,18 @@ export class MessageComponentInteraction extends Interaction {
     return await this.webhook.editOriginal(msg);
   }
 
+  /** Deletes a message with an ID. Ephemeral messages can't be deleted. */
+  async deleteMessage(id: string) {
+    return await this.webhook.deleteMessage(id);
+  }
+
+  /** Deletes the original message. Ephemeral messages can't be deleted. */
+  async deleteOriginal() {
+    if (!this.replied) throw new Error("No original message sent");
+    if (this.ephemeral) throw new Error("Can't delete ephemeral message");
+    return await this.webhook.deleteOriginal();
+  }
+
   /**
    * Creates a follow-up message. Will fail if the interaction hasn't been
    * responded to.
@@ -77,9 +98,11 @@ export class MessageComponentInteraction extends Interaction {
    */
   async respond(msg: string | RESTEditWebhook) {
     if (typeof msg === "string") msg = { content: msg };
+    if (msg.flags) throw new Error("Unsupported, use respondEphemeral instead");
 
     if (!this.deferred && !this.replied) {
       this.replied = true;
+      this.ephemeral = false;
       this.response = { type: 4, data: msg };
       return await this.webhook.getOriginal();
     } else if (this.deferred && !this.replied) {
@@ -104,8 +127,15 @@ export class MessageComponentInteraction extends Interaction {
 
     if (!this.deferred && !this.replied) {
       this.replied = true;
+      this.ephemeral = true;
       this.response = { type: 4, data: msg };
+      return await this.webhook.getOriginal();
+    } else if (this.deferred && !this.replied) {
+      this.replied = true;
+      return await this.webhook.editOriginal(msg);
     }
+
+    return await this.webhook.execute(msg);
   }
 
   /** True if this is a button interaction */

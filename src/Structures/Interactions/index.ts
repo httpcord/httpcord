@@ -11,6 +11,7 @@ import {
 } from "../../Types";
 import { sleep } from "../../Utils";
 import { ApplicationCommandInteraction } from "./ApplicationCommands";
+import { MessageComponentInteraction } from "./MessageComponent";
 
 /** Represents a generic interaction. */
 export class Interaction {
@@ -75,7 +76,7 @@ export class Interaction {
   }
 
   /** True if this is a MessageComponentInteraction */
-  isMessageComponent() {
+  isMessageComponent(): this is MessageComponentInteraction {
     return this.type === InteractionType.MessageComponent;
   }
 
@@ -91,3 +92,4 @@ export class Interaction {
 }
 
 export * from "./ApplicationCommands";
+export * from "./MessageComponent";
