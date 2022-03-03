@@ -1,10 +1,8 @@
-import { APIInteraction } from "discord-api-types/v10";
+import { ApplicationCommandInteraction } from "../../Structures";
 import { BaseManager, BaseConfig } from "..";
 
-export type CommandConfig = BaseConfig & {};
-
 export class CommandManager {
-  async execute(i: APIInteraction) {
+  async execute(i: ApplicationCommandInteraction) {
     return { type: 1 };
   }
 }

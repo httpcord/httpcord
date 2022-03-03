@@ -1,4 +1,6 @@
-# httpcord
+<pre><h1 align="center">httpcord</h1></pre>
+
+[Support server](https://discord.gg/4ew5Gx7m7z)
 
 Framework to build Discord HTTP interaction servers. Forget the gateway, forget
 scaling problems, just throw it in a docker container and put it on Cloud Run :)

@@ -1,15 +1,18 @@
+import { InteractionWebhook, Webhook } from "..";
 import APIManager from "../../API";
 import { InteractionServer } from "../../InteractionServer";
 import {
   APIInteraction,
   APIInteractionGuildMember,
+  APIInteractionResponse,
   APIMessage,
   APIUser,
   InteractionType,
 } from "../../Types";
+import { sleep } from "../../Utils";
 import { ApplicationCommandInteraction } from "./ApplicationCommands";
-import { Webhook } from "..";
-import { InteractionWebhook } from "..";
+
+/** Represents a generic interaction. */
 export class Interaction {
   protected api: APIManager;
   protected webhook: Webhook;
@@ -27,6 +30,7 @@ export class Interaction {
   message?: APIMessage;
   user?: APIUser;
   member?: APIInteractionGuildMember;
+  response?: APIInteractionResponse;
 
   constructor(server: InteractionServer, data: APIInteraction) {
     this.api = server.api;
@@ -48,22 +52,39 @@ export class Interaction {
     this.webhook = new InteractionWebhook(this.api, this);
   }
 
+  /**
+   * Waits until the interaction HTTP response is available then returns it.
+   * WARNING: This has no timeout. Implement your own or risk waiting forever.
+   */
+  async awaitResponse() {
+    while (!this.response) await sleep(200);
+    return this.response;
+  }
+
+  /**
+   * True if this is a ping interaction (i.e. type === 1).
+   * You should never have to deal with these as the framework does it for you.
+   */
   isPing() {
     return this.type === InteractionType.Ping;
   }
 
+  /** True if this is an ApplicationCommandInteraction */
   isApplicationCommand(): this is ApplicationCommandInteraction {
     return this.type === InteractionType.ApplicationCommand;
   }
 
+  /** True if this is a MessageComponentInteraction */
   isMessageComponent() {
     return this.type === InteractionType.MessageComponent;
   }
 
+  /** True if this is an ApplicationCommandAutocompleteInteraction */
   isApplicationCommandAutocomplete() {
     return this.type === InteractionType.ApplicationCommandAutocomplete;
   }
 
+  /** True if this is a ModalSubmitInteraction */
   isModalSubmit() {
     return this.type === InteractionType.ModalSubmit;
   }

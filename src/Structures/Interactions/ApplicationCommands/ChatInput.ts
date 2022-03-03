@@ -6,3 +6,6 @@ import {
   APIUser,
 } from "../../../Types";
 import { InteractionServer } from "../../../InteractionServer";
+import { ApplicationCommandInteraction } from ".";
+
+export class ChatInputInteraction extends ApplicationCommandInteraction {}

@@ -8,6 +8,8 @@ export type BaseConfig = {
 };
 
 export interface BaseManager<T extends BaseConfig, C> {
-  register(config: T, cb: (i: Interaction) => C): void;
+  register?(config: T, cb: (i: Interaction) => C): void;
   execute(i: Interaction): Response | Promise<Response>;
 }
+
+export * from "./Command";
