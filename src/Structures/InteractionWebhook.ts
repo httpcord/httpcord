@@ -20,16 +20,17 @@ export class InteractionWebhook extends Webhook {
 
   async getOriginal() {
     const data = await this.api.post(`${this.url}/messages/@original`);
-    return data.data as APIMessage;
+    if (data.status < 300) return data.data as APIMessage;
   }
 
   async editOriginal(d: JSONEditWebhook) {
     const data = await this.api.patch(`${this.url}/messages/@original`, d);
-    return data.data as APIMessage;
+    if (data.status < 300) return data.data as APIMessage;
   }
 
   async deleteOriginal() {
-    await this.api.delete(`${this.url}/messages/@original`);
+    const data = await this.api.delete(`${this.url}/messages/@original`);
+    return data.status < 300;
   }
 }
 

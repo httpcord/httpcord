@@ -1,13 +1,22 @@
-import { APIInteractionDataResolvedGuildMember, APIUser } from "../Types";
+import {
+  APIInteractionDataResolvedGuildMember,
+  APIUser,
+  APIRole,
+} from "../Types";
 import { User, Role } from ".";
 
 export class Member {
   user: User;
   nick?: string;
   avatar?: string;
-  roles: Role[];
+  roles: Role[] | string[] = [];
 
-  constructor(data: APIInteractionDataResolvedGuildMember, user: APIUser) {
-    this.user = new User(user);
+  constructor(
+    data: APIInteractionDataResolvedGuildMember,
+    user: User,
+    roles?: Role[]
+  ) {
+    this.user = user;
+    this.roles = roles || data.roles;
   }
 }

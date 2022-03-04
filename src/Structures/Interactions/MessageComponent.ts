@@ -1,19 +1,19 @@
-import { Interaction, InteractionWebhook } from "..";
-import { InteractionServer } from "../../InteractionServer";
+import { Interaction, InteractionWebhook, Message } from "..";
+import APIManager from "../../API";
 import {
   APIMessageComponentInteraction,
-  ApplicationCommandType,
-  RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
   ComponentType,
+  RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
 } from "../../Types";
 
 /** Represents a message component interaction sent from a text message. */
 export class MessageComponentInteraction extends Interaction {
-  webhook: InteractionWebhook;
+  protected webhook: InteractionWebhook;
 
   locale: string;
   customId: string;
   componentType: ComponentType;
+  message: Message;
   selected: string[] | null = null;
 
   /** Whether the interaction has been responded to with an actual message. */
@@ -23,13 +23,14 @@ export class MessageComponentInteraction extends Interaction {
   /** Whether the original response/deferral was ephemeral or not. */
   ephemeral?: boolean;
 
-  constructor(server: InteractionServer, data: APIMessageComponentInteraction) {
-    super(server, data);
+  constructor(api: APIManager, data: APIMessageComponentInteraction) {
+    super(api, data);
     this.locale = data.locale;
     this.customId = data.data.custom_id;
     this.componentType = data.data.component_type;
-    if (data.data.component_type === 3) this.selected = data.data.values;
+    this.message = new Message(data.message);
 
+    if (data.data.component_type === 3) this.selected = data.data.values;
     this.webhook = new InteractionWebhook(this.api, this);
   }
 
@@ -37,6 +38,7 @@ export class MessageComponentInteraction extends Interaction {
    * Defers the interaction. The user sees a "loading" state.
    */
   defer(ephemeral?: boolean) {
+    if (this.replied || this.deferred) return;
     this.deferred = true;
     this.ephemeral = ephemeral || false;
     this.response = { type: 5, data: { flags: ephemeral ? 64 : 0 } };

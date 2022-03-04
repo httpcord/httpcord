@@ -1,18 +1,25 @@
 import { Interaction, InteractionWebhook } from "../..";
-import { InteractionServer } from "../../../InteractionServer";
+import APIManager from "../../../API";
 import {
   APIApplicationCommandInteraction,
+  ApplicationCommandInteractionResponse,
   ApplicationCommandType,
   RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
 } from "../../../Types";
+import { sleep } from "../../../Utils";
+import { ResolvedManager } from "../ResolvedManager";
+import { ChatInputInteraction } from "./ChatInput";
 
 export class ApplicationCommandInteraction extends Interaction {
-  webhook: InteractionWebhook;
+  protected resolved?: ResolvedManager;
+  protected webhook: InteractionWebhook;
+  rawData: APIApplicationCommandInteraction;
 
   locale: string;
   commandId: string;
   commandName: string;
   commandType: ApplicationCommandType;
+  response?: ApplicationCommandInteractionResponse;
 
   /** Whether the interaction has been responded to with an actual message. */
   replied = false;
@@ -21,23 +28,34 @@ export class ApplicationCommandInteraction extends Interaction {
   /** Whether the original response/deferral was ephemeral or not. */
   ephemeral?: boolean;
 
-  constructor(
-    server: InteractionServer,
-    data: APIApplicationCommandInteraction
-  ) {
-    super(server, data);
+  constructor(api: APIManager, data: APIApplicationCommandInteraction) {
+    super(api, data);
+    this.rawData = data;
     this.locale = data.locale;
     this.commandId = data.data.id;
     this.commandName = data.data.name;
     this.commandType = data.data.type;
 
+    if ("resolved" in data.data && data.data.resolved !== undefined)
+      this.resolved = new ResolvedManager(data.data.resolved);
+
     this.webhook = new InteractionWebhook(this.api, this);
+  }
+
+  /**
+   * Waits until the interaction HTTP response is available then returns it.
+   * WARNING: This has no timeout. Implement your own or risk waiting forever.
+   */
+  async awaitResponse() {
+    while (!this.response) await sleep(200);
+    return this.response;
   }
 
   /**
    * Defers the interaction. The user sees a "loading" state.
    */
   defer(ephemeral?: boolean) {
+    if (this.replied || this.deferred) return;
     this.deferred = true;
     this.ephemeral = ephemeral || false;
     this.response = { type: 5, data: { flags: ephemeral ? 64 : 0 } };
@@ -139,15 +157,50 @@ export class ApplicationCommandInteraction extends Interaction {
     return await this.webhook.execute(msg);
   }
 
-  isChatInputCommand() {
+  /** Gets a cached user. */
+  getUser(id: string) {
+    if (this.resolved) return this.resolved.user(id);
+  }
+
+  /** Gets a cached member. */
+  getMember(id: string) {
+    if (this.resolved) return this.resolved.member(id);
+  }
+
+  /** Gets a cached role. */
+  getRole(id: string) {
+    if (this.resolved) return this.resolved.role(id);
+  }
+
+  /** Gets a cached channel. */
+  getChannel(id: string) {
+    if (this.resolved) return this.resolved.channel(id);
+  }
+
+  /** Gets a cached message. */
+  getMessage(id: string) {
+    if (this.resolved) return this.resolved.message(id);
+  }
+
+  /** Gets a cached attachment. */
+  getAttachment(id: string) {
+    if (this.resolved) return this.resolved.attachment(id);
+  }
+
+  /** True if this is a ChatInputInteraction */
+  isChatInputCommand(): this is ChatInputInteraction {
     return this.commandType === ApplicationCommandType.ChatInput;
   }
 
+  /** True if this is a UserInteraction */
   isUserCommand() {
     return this.commandType === ApplicationCommandType.User;
   }
 
+  /** True if this is a MessageInteraction */
   isMessageCommand() {
     return this.commandType === ApplicationCommandType.Message;
   }
 }
+
+export * from "./ChatInput";

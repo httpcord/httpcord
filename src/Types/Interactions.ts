@@ -9,6 +9,9 @@ import {
   APIModalInteractionResponse,
   APIModalSubmitInteraction,
   APIWebhook,
+  APIChatInputApplicationCommandInteractionDataResolved,
+  APIUserApplicationCommandInteractionDataResolved,
+  APIMessageApplicationCommandInteractionDataResolved,
 } from "./DiscordAPITypes";
 
 /**
@@ -97,19 +100,19 @@ export enum ComponentAcknowledgementType {
 }
 
 /** Represents a valid interaction response for an application command. */
-export type APIApplicationCommandInteractionResponse =
+export type ApplicationCommandInteractionResponse =
   | APIInteractionResponseChannelMessageWithSource
   | APIInteractionResponseDeferredChannelMessageWithSource
   | APIModalInteractionResponse;
 
 /** Represents a valid interaction response for a message component. */
-export type APIMessageComponentInteractionResponse =
-  | APIApplicationCommandInteractionResponse
+export type MessageComponentInteractionResponse =
+  | ApplicationCommandInteractionResponse
   | APIInteractionResponseDeferredMessageUpdate
   | APIInteractionResponseUpdateMessage;
 
 /** Represents a valid interaction response for a modal. */
-export type APIModalInteractionResponse =
+export type ModalInteractionResponse =
   | APIInteractionResponseChannelMessageWithSource
   | APIInteractionResponseDeferredChannelMessageWithSource;
 
@@ -119,6 +122,12 @@ export type APIUserInitiatedInteraction =
   | APIApplicationCommandAutocompleteInteraction
   | APIMessageComponentInteraction
   | APIModalSubmitInteraction;
+
+/** Represents application command resolved data */
+export type APIInteractionDataResolved =
+  | APIChatInputApplicationCommandInteractionDataResolved
+  | APIUserApplicationCommandInteractionDataResolved
+  | APIMessageApplicationCommandInteractionDataResolved;
 
 /** Represents a webhook for internal interaction use only. */
 export type APIInteractionWebhook = Partial<APIWebhook> &

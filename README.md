@@ -39,8 +39,9 @@ interaction.listen(process.env.PORT || 5000, () => {
   - [x] Start and listen a server
   - [ ] Ability to register and handle all interaction types
   - [ ] Respond to all interacion types
-  - [ ] Options like pylon?
+  - [x] Options like pylon?
   - [ ] APIManager Rate limit handling
+  - [ ] APIManager Error handling
 - [ ] Extra bot token functionality
   - [ ] Supply bot token in config
   - [ ] Store application command data (name, description) within code and register on startup

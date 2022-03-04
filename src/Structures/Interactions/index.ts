@@ -1,12 +1,8 @@
-import { InteractionWebhook, Webhook } from "..";
+import { InteractionWebhook, Member, Message, User, Webhook } from "..";
 import APIManager from "../../API";
-import { InteractionServer } from "../../InteractionServer";
 import {
   APIInteraction,
-  APIInteractionGuildMember,
   APIInteractionResponse,
-  APIMessage,
-  APIUser,
   InteractionType,
 } from "../../Types";
 import { sleep } from "../../Utils";
@@ -15,6 +11,7 @@ import { MessageComponentInteraction } from "./MessageComponent";
 
 /** Represents a generic interaction. */
 export class Interaction {
+  rawData: APIInteraction;
   protected api: APIManager;
   protected webhook: Webhook;
 
@@ -28,13 +25,14 @@ export class Interaction {
   guildId?: string;
   guildLocale?: string;
 
-  message?: APIMessage;
-  user?: APIUser;
-  member?: APIInteractionGuildMember;
+  message?: Message;
+  user?: User;
+  member?: Member;
   response?: APIInteractionResponse;
 
-  constructor(server: InteractionServer, data: APIInteraction) {
-    this.api = server.api;
+  constructor(api: APIManager, data: APIInteraction) {
+    this.rawData = data;
+    this.api = api;
 
     this.id = data.id;
     this.token = data.token;
@@ -46,9 +44,10 @@ export class Interaction {
     this.guildId = data.guild_id;
     this.guildLocale = data.guild_locale;
 
-    this.message = data.message;
-    this.user = data.user;
-    this.member = data.member;
+    if (data.message) this.message = new Message(data.message);
+    if (data.user) this.user = new User(data.user);
+    if (data.member)
+      this.member = new Member(data.member, new User(data.member.user));
 
     this.webhook = new InteractionWebhook(this.api, this);
   }
@@ -60,6 +59,16 @@ export class Interaction {
   async awaitResponse() {
     while (!this.response) await sleep(200);
     return this.response;
+  }
+
+  /** True if the interaction was ran in DMs. */
+  isInDM() {
+    return !!this.user;
+  }
+
+  /** True if the interaction was ran in a server. */
+  isInServer() {
+    return !!this.member;
   }
 
   /**

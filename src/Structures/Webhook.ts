@@ -41,20 +41,21 @@ export class Webhook {
 
   async execute(d: JSONExecuteWebhook) {
     const data = await this.api.post(this.url, d);
-    return data.data as APIMessage;
+    if (data.status < 300) return data.data as APIMessage;
   }
 
   async getMessage(id: string) {
     const data = await this.api.get(`${this.url}/messages/${id}`);
-    return data.data as APIMessage;
+    if (data.status < 300) return data.data as APIMessage;
   }
 
   async editMessage(id: string, d: JSONEditWebhook) {
     const data = await this.api.patch(`${this.url}/messages/${id}`, d);
-    return data.data as APIMessage;
+    if (data.status < 300) return data.data as APIMessage;
   }
 
   async deleteMessage(id: string) {
-    await this.api.delete(`${this.url}/messages/${id}`);
+    const data = await this.api.delete(`${this.url}/messages/${id}`);
+    return data.status < 300;
   }
 }

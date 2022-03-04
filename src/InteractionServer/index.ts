@@ -3,8 +3,12 @@ import { Verify, JSONBody, Raw } from "../Middleware";
 import { APIInteraction, APIInteractionResponse } from "../Types";
 import { Config } from "./Config";
 import APIManager from "../API";
-import { Interaction, ApplicationCommandInteraction } from "../Structures";
-import { CommandManager } from "../Managers";
+import {
+  Interaction,
+  ApplicationCommandInteraction,
+  MessageComponentInteraction,
+} from "../Structures";
+import { CommandManager, ComponentManager } from "../Managers";
 
 /**
  * Represents an interaction server. It takes a public key (and optionally bot
@@ -12,14 +16,18 @@ import { CommandManager } from "../Managers";
  * uses Express under the hood).
  */
 export class InteractionServer {
-  api = new APIManager();
-  command = new CommandManager();
+  private api = new APIManager();
+  private command = new CommandManager();
+
+  // Shorthands for registering interactions
+  readonly slash = this.command.slash;
+  readonly component = new ComponentManager();
 
   private router = Router();
   private app = Express();
 
   /** Maps to the server's internal Express app listen function. */
-  listen = this.app.listen;
+  readonly listen = this.app.listen;
 
   /**
    * Creates a new interaction server.
@@ -35,14 +43,15 @@ export class InteractionServer {
    * respond to the interaction.
    */
   private async resp(req: Request, res: Response) {
-    const rawInteraction = req.body as APIInteraction;
+    const data = req.body as APIInteraction;
     let interactionType = Interaction;
-    switch (rawInteraction.type) {
-      case 2:
-        interactionType = ApplicationCommandInteraction;
-        break;
-    }
-    const interaction = new interactionType(this, rawInteraction);
+
+    if (data.type === 2) interactionType = ApplicationCommandInteraction;
+    if (data.type === 3) interactionType = MessageComponentInteraction;
+    if (data.type === 4) console;
+    if (data.type === 5) console;
+
+    const interaction = new interactionType(this.api, data);
     return res.json(await this.handle(interaction));
   }
 
