@@ -15,10 +15,9 @@ export class CommandManager {
 
     if (i.commandType === 1) interactionType = ChatInputInteraction;
 
-    const int = new interactionType(i.server, i.rawData);
+    const int = new interactionType(i.api, i.rawData);
 
     if (int.isChatInputCommand()) return await this.slash.execute(int);
-
     return { type: 4, data: { content: "httpcord: unknown command type" } };
   }
 }

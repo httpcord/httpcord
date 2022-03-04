@@ -12,7 +12,7 @@ import { MessageComponentInteraction } from "./MessageComponent";
 /** Represents a generic interaction. */
 export class Interaction {
   rawData: APIInteraction;
-  protected api: APIManager;
+  api: APIManager;
   protected webhook: Webhook;
 
   id: string;
