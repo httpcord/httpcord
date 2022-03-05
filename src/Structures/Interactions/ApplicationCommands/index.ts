@@ -1,4 +1,4 @@
-import { Interaction, InteractionWebhook } from "../..";
+import { InteractionWebhook } from "../..";
 import APIManager from "../../../API";
 import {
   APIApplicationCommandInteraction,
@@ -7,8 +7,8 @@ import {
   RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
 } from "../../../Types";
 import { sleep } from "../../../Utils";
+import { Interaction } from "../Interaction";
 import { ResolvedManager } from "../ResolvedManager";
-import { ChatInputInteraction } from "./ChatInput";
 
 export class ApplicationCommandInteraction extends Interaction {
   protected resolved?: ResolvedManager;
@@ -188,7 +188,7 @@ export class ApplicationCommandInteraction extends Interaction {
   }
 
   /** True if this is a ChatInputInteraction */
-  isChatInputCommand(): this is ChatInputInteraction {
+  isChatInputCommand(): this is import("./ChatInput").ChatInputInteraction {
     return this.commandType === ApplicationCommandType.ChatInput;
   }
 

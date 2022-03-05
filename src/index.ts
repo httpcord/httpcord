@@ -1,1 +1,1 @@
-export { InteractionServer } from "./InteractionServer";
+export { InteractionServer, ExpressServer } from "./InteractionServer";

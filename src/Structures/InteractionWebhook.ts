@@ -1,4 +1,5 @@
-import { Interaction, Webhook } from ".";
+import { Webhook } from "./Webhook";
+import { Interaction } from ".";
 import APIManager from "../API";
 import {
   APIMessage,
@@ -33,5 +34,3 @@ export class InteractionWebhook extends Webhook {
     return data.status < 300;
   }
 }
-
-InteractionWebhook.fromToken(new APIManager(), "test", "test");

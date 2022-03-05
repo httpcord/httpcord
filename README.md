@@ -5,14 +5,15 @@
 Framework to build Discord HTTP interaction servers. Forget the gateway, forget
 scaling problems, just throw it in a docker container and put it on Cloud Run :)
 
-## Example
+## Example (for Node.JS and Express)
 
 ```ts
-import { InteractionServer } from "httpcord";
+import Express from "express";
+import { ExpressServer } from "httpcord";
 
 const publicKey = process.env["PUBLIC_KEY"] || process.exit(1);
 
-const interaction = new InteractionServer({ publicKey });
+const interaction = new ExpressServer({ publicKey });
 
 interaction.slash.register(
   {
@@ -26,10 +27,8 @@ interaction.slash.register(
   }
 );
 
-interaction.listen(process.env.PORT || 5000, () => {
-  console.log(
-    `Interaction server listening on port ${process.env.PORT || 5000}`
-  );
+interaction.listen!(process.env.PORT || 5000, () => {
+  console.log(`Server listening on port ${process.env.PORT || 5000}`);
 });
 ```
 

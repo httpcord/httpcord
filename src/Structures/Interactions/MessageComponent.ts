@@ -1,10 +1,11 @@
-import { Interaction, InteractionWebhook, Message } from "..";
+import { InteractionWebhook, Message } from "..";
 import APIManager from "../../API";
 import {
   APIMessageComponentInteraction,
   ComponentType,
   RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
 } from "../../Types";
+import { Interaction } from "./Interaction";
 
 /** Represents a message component interaction sent from a text message. */
 export class MessageComponentInteraction extends Interaction {

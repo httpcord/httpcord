@@ -1,77 +1,86 @@
-import Express, { Router, Request, Response } from "express";
-import { Verify, JSONBody, Raw } from "../Middleware";
-import { APIInteraction, APIInteractionResponse } from "../Types";
-import { Config } from "./Config";
 import APIManager from "../API";
+import { CommandManager, ComponentManager } from "../Managers";
+import { JSONBody, Raw, Verify } from "../Middleware";
 import {
-  Interaction,
   ApplicationCommandInteraction,
+  Interaction,
   MessageComponentInteraction,
 } from "../Structures";
-import { CommandManager, ComponentManager } from "../Managers";
+import { APIInteraction, APIInteractionResponse } from "../Types";
+import { InteractionServerConfig } from "./Config";
 
+const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
 /**
  * Represents an interaction server. It takes a public key (and optionally bot
- * token) and in return gives something similar to an Express app (it actually
- * uses Express under the hood).
+ * token) and in return gives a bare-bones interaction server. Use it by calling
+ * InteractionServer#handleRequest to handle FetchAPI-compliant request/response
+ * or go more low-level with InteractionServer#handleInteraction for more
+ * granular control, allowing you to use it pretty much anywhere JavaScript runs
  */
 export class InteractionServer {
-  private api = new APIManager();
-  private command = new CommandManager();
+  protected api = new APIManager();
+  protected command = new CommandManager();
+  private verify: ReturnType<typeof Verify>;
 
   // Shorthands for registering interactions
   readonly slash = this.command.slash;
   readonly component = new ComponentManager();
 
-  private router = Router();
-  private app = Express();
-
-  /** Maps to the server's internal Express app listen function. */
-  readonly listen = this.app.listen;
-
   /**
    * Creates a new interaction server.
    * @param {config} Config - the configuration to use
    */
-  constructor(config: Config) {
-    this.router.post("/", Raw, Verify(config.publicKey), JSONBody, this.resp);
-    this.app.use(this.router);
+  constructor(config: InteractionServerConfig) {
+    this.verify = Verify(config.publicKey);
   }
 
   /**
-   * Handles creating the Interaction class and passing it around internally to
-   * respond to the interaction.
+   * Handles an incoming request. Returns a Response object.
+   * Unlike InteractionServer#handleInteraction, this method does verification
+   * for you based on what you put for publicKey.
+   * This allows the server to be used in serverless environments like CF
+   * Workers or Deno Deploy.
    */
-  private async resp(req: Request, res: Response) {
-    const data = req.body as APIInteraction;
-    let interactionType = Interaction;
+  async handleRequest(r: Request): Promise<Response> {
+    // Verify
+    const rawBody = await Raw(r);
+    const isVerified = this.verify(r, rawBody);
 
-    if (data.type === 2) interactionType = ApplicationCommandInteraction;
-    if (data.type === 3) interactionType = MessageComponentInteraction;
-    if (data.type === 4) console;
-    if (data.type === 5) console;
+    if (!isVerified) return new Response("Unauthorized", { status: 401 });
 
-    const interaction = new interactionType(this.api, data);
-    return res.json(await this.handle(interaction));
+    const data = await JSONBody(rawBody);
+    if (!data) return new Response("No body", { status: 400 });
+
+    return respond(await this.handleInteraction(data));
   }
 
-  private async handle(i: Interaction): Promise<APIInteractionResponse> {
-    // 1: Ping interaction
+  /**
+   * More low-level function if you want to handle verification and parsing
+   * yourself.
+   *
+   * WARNING: There is no checks for authentication, even with publicKey set
+   * in config!!!!!!! Your server will allow anyone to forge fake interactions
+   * from ANYONE with ANYTHING if you fail to verify properly!!!
+   */
+  async handleInteraction(d: APIInteraction): Promise<APIInteractionResponse> {
+    let interactionType = Interaction;
+
+    if (d.type === 2) interactionType = ApplicationCommandInteraction;
+    if (d.type === 3) interactionType = MessageComponentInteraction;
+    if (d.type === 4) console; // temp
+    if (d.type === 5) console; // temp
+
+    const i = new interactionType(this.api, d);
+
     if (i.isPing()) return { type: 1 };
-
-    // 2: Application command interaction
     if (i.isApplicationCommand()) return this.command.execute(i);
-
-    // 3: Message component interaction
-    if (i.isMessageComponent()) console;
-
-    // 4: Autocomplete interaction
-    if (i.isApplicationCommandAutocomplete()) console;
-
-    // 5: Modal submit interaction
-    if (i.isModalSubmit()) console;
+    if (i.isMessageComponent()) console; // temp
+    if (i.isApplicationCommandAutocomplete()) console; // temp
+    if (i.isModalSubmit()) console; // temp
 
     // Default for unimplemented interaction types
     return { type: 4, data: { content: "httpcord: unknown interaction type" } };
   }
 }
+
+export * from "./Express";

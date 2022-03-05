@@ -1,6 +1,12 @@
-import { Request, Response, NextFunction } from "express";
+import Express from "express";
 
-export const Raw = (req: Request, _: Response, next: NextFunction) => {
+export const Raw = (req: Request) => req.text();
+
+export const ERaw = (
+  req: Express.Request,
+  _: Express.Response,
+  next: Express.NextFunction
+) => {
   let data = "";
   req.setEncoding("utf8");
 
