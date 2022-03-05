@@ -63,8 +63,5 @@ jobs:
         run: "node .github/workflows/bump.js ${{ github.sha }}"
 
       - name: "Publish to NPM"
-        run: |
-          echo "_auth=${{ secrets.NPM_TOKEN }}" >> .npmrc
-          echo "email=andrey@andre4ik3.email" >> .npmrc
-          echo "always-auth=true" >> .npmrc
-          npm publish
+        env: { NPM_TOKEN: "${{ secrets.NPM_TOKEN }}" }
+        run: "npm publish"
