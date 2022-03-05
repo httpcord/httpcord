@@ -1,0 +1,31 @@
+name: "CI"
+on: "push"
+
+jobs:
+  Lint:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v2
+
+      - name: "Setup Node.JS"
+        uses: actions/setup-node@v2
+        with: { node-version: "16" }
+
+      - name: "Lint Code"
+        run: "npx eslint -f .github/workflows/formatter.js src/**/*.ts"
+
+  Build:
+    runs-on: "ubuntu-latest"
+
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v2
+
+      - name: "Setup Node.JS"
+        uses: actions/setup-node@v2
+        with: { node-version: "16" }
+
+      - name: "Compile Code"
+        run: "npx tsc --noEmit"
