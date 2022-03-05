@@ -8,9 +8,9 @@ import {
 } from "../../Structures";
 import {
   APIApplicationCommandOptionChoice,
+  ApplicationCommandInteractionResponse,
   ApplicationCommandOptionType as OptionType,
   ChannelType,
-  ApplicationCommandInteractionResponse,
   CommandAcknowledgementType,
 } from "../../Types";
 
@@ -77,78 +77,75 @@ export type OptionConfig =
   | NumberOptionConfig
   | ChannelOptionConfig;
 
+export const defaultOptionConfig: Omit<BaseOptionConfig, "description"> = {
+  required: true,
+};
+
 export class OptionProvider {
+  private op = new Map<string, Option>();
+  config = new Map<string, OptionConfig>();
+
+  constructor(i: ChatInputInteraction) {
+    for (const option of i.options || []) {
+      switch (option.type) {
+        case OptionType.String:
+          this.op.set(option.name, option.value);
+      }
+    }
+  }
+
   /** Creates a string option. */
-  static string(d: string | StringOptionConfig) {
-    if (typeof d === "string") d = { description: d, type: OptionType.String };
+  string(d: string): string;
+  string(d: StringOptionConfig & { required: false }): string | undefined;
+  string(d: StringOptionConfig): string;
+  string(d: StringOptionConfig | string): string | undefined {
+    if (typeof d === "string" || d.required !== false) return "";
   }
 
   /** Creates an integer option. */
-  static integer(d: string | NumberOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.String };
+  integer(d: string): number;
+  integer(d: NumberOptionConfig & { required: false }): number | undefined;
+  integer(d: NumberOptionConfig): number;
+  integer(d: NumberOptionConfig | string): number | undefined {
+    if (typeof d === "string" || d.required !== false) return 0;
   }
 
-  /** Creates a boolean option. */
-  static boolean(d: string | BaseOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.Boolean };
+  /** Creates an integer option. */
+  boolean(d: string): boolean;
+  boolean(d: BaseOptionConfig & { required: false }): boolean | undefined;
+  boolean(d: BaseOptionConfig): boolean;
+  boolean(d: BaseOptionConfig | string): boolean | undefined {
+    if (typeof d === "string" || d.required !== false) return false;
   }
 
   /** Creates a user option. */
-  static user(d: string | BaseOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.User };
-  }
-
-  /** Creates a channel option. */
-  static channel(d: string | ChannelOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.Channel };
-  }
-
-  /** Creates a role option. */
-  static role(d: string | BaseOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.Role };
-  }
-
-  /** Creates a mentionable option. */
-  static mentionable(d: string | BaseOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.Mentionable };
-  }
-
-  /** Creates a number (double) option. */
-  static number(d: string | NumberOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.Number };
-  }
-
-  /** Creates an attachment option. */
-  static attachment(d: string | BaseOptionConfig) {
-    if (typeof d === "string") d = { description: d };
-    return { ...d, type: OptionType.Attachment };
+  user(d: string): User;
+  user(d: NumberOptionConfig & { required: false }): User | undefined;
+  user(d: NumberOptionConfig): User;
+  user(d: NumberOptionConfig | string): User | undefined {
+    if (typeof d === "string" || d.required !== false)
+      return new User({ id: "", username: "", discriminator: "", avatar: "" });
   }
 }
 
-export type ResolvedOptions = { [key: string]: Option };
+export type ResolvedOptions<T> = T extends { [key: string]: Option | undefined }
+  ? T
+  : { [key: string]: Option | undefined };
 
-export type ChatInputCommandConfig = {
+export type ChatInputCommandConfig<T> = {
   name: string;
   description: string;
-  options?: (opts: OptionProvider) => { [key: string]: OptionConfig };
+  options?: (opts: OptionProvider) => ResolvedOptions<T>;
   ackBehavior?: CommandAcknowledgementType;
 };
 
-type CommandConfigResolved = Omit<ChatInputCommandConfig, "options"> & {
-  options?: Map<string, OptionData>;
-};
-
-type Callback = (i: ChatInputInteraction, opts: ResolvedOptions) => unknown;
+type Callback<T> = (
+  i: ChatInputInteraction,
+  opts: ResolvedOptions<T>
+) => unknown;
 
 function resolveIncomingOptions(i: ChatInputInteraction) {
-  let options: ResolvedOptions = {};
+  let options: Record<string, Option> = {};
 
   if (i.options) {
     for (const o of i.options) {
@@ -164,21 +161,11 @@ function resolveIncomingOptions(i: ChatInputInteraction) {
 export class ChatInputCommandManager {
   private registered = new Map<
     string,
-    CommandConfigResolved & { fn: Callback }
+    ChatInputCommandConfig<any> & { fn: Callback<any> }
   >();
 
-  register(config: ChatInputCommandConfig, fn: Callback) {
-    const options = new Map<string, OptionData>();
-
-    // Resolve options, if there are any
-    if (config.options)
-      for (const [k, v] of Object.entries(config.options)) {
-        const data = v as OptionConfig & Required<Pick<OptionConfig, "type">>;
-        const name = data.name || k;
-        options.set(name, { ...data, name });
-      }
-
-    this.registered.set(config.name, { ...config, options, fn });
+  register<T>(config: ChatInputCommandConfig<T>, fn: Callback<T>) {
+    this.registered.set(config.name, { ...config, fn });
   }
 
   async execute(
