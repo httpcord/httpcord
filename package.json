@@ -4,7 +4,8 @@
   "description": "Discord HTTP Interaction server",
   "main": "dist",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "npx eslint -f .github/workflows/formatter.js src/**/*.ts; exit 0"
   },
   "dependencies": {
     "axios": "^0.26.0",
