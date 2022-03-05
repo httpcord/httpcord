@@ -64,4 +64,6 @@ jobs:
 
       - name: "Publish to NPM"
         env: { NPM_TOKEN: "${{ secrets.NPM_TOKEN }}" }
-        run: "npm publish"
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
+          npm publish
