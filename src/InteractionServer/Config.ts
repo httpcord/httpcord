@@ -5,6 +5,5 @@ export type InteractionServerConfig = {
 };
 
 export type ExpressServerConfig =
-  | InteractionServerConfig
   | (InteractionServerConfig & { app: Application; url?: string })
   | (InteractionServerConfig & { router: Router });

@@ -12,8 +12,8 @@ import Express from "express";
 import { ExpressServer } from "httpcord";
 
 const publicKey = process.env["PUBLIC_KEY"] || process.exit(1);
-
-const interaction = new ExpressServer({ publicKey });
+const app = Express();
+const interaction = new ExpressServer({ publicKey, app });
 
 interaction.slash.register(
   {
@@ -27,7 +27,7 @@ interaction.slash.register(
   }
 );
 
-interaction.listen!(process.env.PORT || 5000, () => {
+app.listen(process.env.PORT || 5000, () => {
   console.log(`Server listening on port ${process.env.PORT || 5000}`);
 });
 ```

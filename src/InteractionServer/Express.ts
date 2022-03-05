@@ -8,10 +8,7 @@ import { ExpressServerConfig } from "./Config";
  * request and response objects. Note that httpcord has no dependency on Express
  * itself, therefore you need to install, make the app and pass it yourself.
  */
-
 export class ExpressServer extends InteractionServer {
-  readonly listen?: Express.Application["listen"];
-
   constructor(config: ExpressServerConfig) {
     super(config);
     const verify = EVerify(config.publicKey);
@@ -20,10 +17,6 @@ export class ExpressServer extends InteractionServer {
       config.app.post(config.url || "/", ERaw, verify, EJSONBody, this.resp);
     } else if ("router" in config) {
       config.router.post("/", ERaw, verify, EJSONBody, this.resp);
-    } else {
-      const app = Express();
-      app.post("/", ERaw, EVerify(config.publicKey), EJSONBody, this.resp);
-      this.listen = app.listen;
     }
   }
 
