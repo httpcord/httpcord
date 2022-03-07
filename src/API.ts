@@ -15,5 +15,3 @@ export default class APIManager {
   delete = async (r: Route, c?: Config) => this.session.delete(r, c);
   options = async (r: Route, c?: Config) => this.session.options(r, c);
 }
-
-export { Routes } from "./Types";
