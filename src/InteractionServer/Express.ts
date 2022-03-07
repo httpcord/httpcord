@@ -12,11 +12,12 @@ export class ExpressServer extends InteractionServer {
   constructor(config: ExpressServerConfig) {
     super(config);
     const verify = EVerify(config.publicKey);
+    const respond = this.resp.bind(this);
 
     if ("app" in config) {
-      config.app.post(config.url || "/", ERaw, verify, EJSONBody, this.resp);
+      config.app.post(config.url || "/", ERaw, verify, EJSONBody, respond);
     } else {
-      config.router.post("/", ERaw, verify, EJSONBody, this.resp);
+      config.router.post("/", ERaw, verify, EJSONBody, respond);
     }
   }
 
