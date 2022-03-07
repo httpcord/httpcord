@@ -16,5 +16,7 @@ export const EJSONBody = (
   try {
     req.body = JSON.parse(req.body);
     next();
-  } catch (e) {}
+  } catch (e) {
+    // Continue regardless of error
+  }
 };

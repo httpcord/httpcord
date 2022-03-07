@@ -1,9 +1,5 @@
-import {
-  APIInteractionDataResolvedGuildMember,
-  APIUser,
-  APIRole,
-} from "../Types";
-import { User, Role } from ".";
+import { Role, User } from ".";
+import { APIInteractionDataResolvedGuildMember } from "../Types";
 
 export class Member {
   user: User;
