@@ -81,19 +81,11 @@ export const defaultOptionConfig: Omit<BaseOptionConfig, "description"> = {
   required: true,
 };
 
-export class OptionProvider {
-  private op = new Map<string, Option>();
-  config = new Map<string, OptionConfig>();
-
-  constructor(i: ChatInputInteraction) {
-    for (const option of i.options || []) {
-      switch (option.type) {
-        case OptionType.String:
-          this.op.set(option.name, option.value);
-      }
-    }
-  }
-
+/**
+ * This class lets you create options. It is purely for typing purposes, option
+ * resolving is done in a different place.
+ */
+export abstract class OptionProvider {
   /** Creates a string option. */
   string(d: string): string;
   string(d: StringOptionConfig & { required: false }): string | undefined;
@@ -123,8 +115,89 @@ export class OptionProvider {
   user(d: NumberOptionConfig & { required: false }): User | undefined;
   user(d: NumberOptionConfig): User;
   user(d: NumberOptionConfig | string): User | undefined {
-    if (typeof d === "string" || d.required !== false)
+    if (typeof d === "string" || d.required !== false) {
       return new User({ id: "", username: "", discriminator: "", avatar: "" });
+    }
+  }
+
+  /** Creates a channel option. */
+  channel(d: string): Channel;
+  channel(d: ChannelOptionConfig & { required: false }): Channel | undefined;
+  channel(d: ChannelOptionConfig): Channel;
+  channel(d: ChannelOptionConfig | string): Channel | undefined {
+    if (typeof d === "string" || d.required !== false) {
+      return new Channel({ id: "", name: "", type: 0, permissions: "" });
+    }
+  }
+
+  /** Creates a role option. */
+  role(d: string): Role;
+  role(d: BaseOptionConfig & { required: false }): Role | undefined;
+  role(d: BaseOptionConfig): Role;
+  role(d: BaseOptionConfig | string): Role | undefined {
+    if (typeof d === "string" || d.required !== false) {
+      return new Role({
+        id: "",
+        name: "",
+        color: 0,
+        hoist: false,
+        position: 0,
+        permissions: "",
+        managed: false,
+        mentionable: false,
+      });
+    }
+  }
+
+  /** Creates a mentionable option. */
+  mentionable(d: string): User | Role;
+  mentionable(
+    d: BaseOptionConfig & { required: false }
+  ): User | Role | undefined;
+  mentionable(d: BaseOptionConfig): User | Role;
+  mentionable(d: BaseOptionConfig | string): User | Role | undefined {
+    if (typeof d === "string" || d.required !== false) {
+      return new User({ id: "", username: "", discriminator: "", avatar: "" });
+    }
+  }
+
+  /** Creates a number option. */
+  number(d: string): number;
+  number(d: NumberOptionConfig & { required: false }): number | undefined;
+  number(d: NumberOptionConfig): number;
+  number(d: NumberOptionConfig | string): number | undefined {
+    if (typeof d === "string" || d.required !== false) return 0;
+  }
+
+  /** Creates an attachment option. */
+  attachment(d: string): Attachment;
+  attachment(d: BaseOptionConfig & { required: false }): Attachment | undefined;
+  attachment(d: BaseOptionConfig): Attachment;
+  attachment(d: BaseOptionConfig | string): Attachment | undefined {
+    if (typeof d === "string" || d.required !== false) {
+      return new Attachment({
+        id: "",
+        filename: "",
+        size: 0,
+        url: "",
+        proxy_url: "",
+      });
+    }
+  }
+}
+
+/**
+ * This class gets passed to the config function upon registration to grab the
+ * options and convert them into a config.
+ */
+// WIP
+export class OptionResolver /*implements OptionProvider*/ {
+  private config = new Map<string, OptionData>();
+
+  string(d: string | StringOptionConfig) {
+    if (typeof d === "string") d = { description: d };
+    this.config.set("test", { ...d, name: "test", type: OptionType.String });
+    return "";
   }
 }
 
@@ -145,13 +218,29 @@ type Callback<T> = (
 ) => unknown;
 
 function resolveIncomingOptions(i: ChatInputInteraction) {
-  let options: Record<string, Option> = {};
+  const options: Record<string, Option> = {};
 
   if (i.options) {
     for (const o of i.options) {
       let value: Option = o.value;
-      if (o.type === OptionType.User) value;
-      Object.defineProperty(options, o.name, { value: o.value });
+      switch (o.type) {
+        case OptionType.User:
+          value = i.getUser(o.value) as User;
+          break;
+        case OptionType.Channel:
+          value = i.getChannel(o.value) as Channel;
+          break;
+        case OptionType.Role:
+          value = i.getRole(o.value) as Role;
+          break;
+        case OptionType.Mentionable:
+          value = (i.getUser(o.value) || i.getRole(o.value)) as User | Role;
+          break;
+        case OptionType.Attachment:
+          value = i.getAttachment(o.value) as Attachment;
+          break;
+      }
+      Object.defineProperty(options, o.name, { value });
     }
   }
 
@@ -175,16 +264,17 @@ export class ChatInputCommandManager {
 
     if (data) {
       const options = resolveIncomingOptions(i);
+      let e = false;
 
-      if (data.ackBehavior !== CommandAcknowledgementType.Manual) {
-        const e = data.ackBehavior === CommandAcknowledgementType.AutoEphemeral;
-
-        data.fn(i, options); // Run in background
-        setTimeout(() => i.defer(e), 1500); // Defer if no reply in 1500ms
-        return i.awaitResponse(); // Guaranteed to be something because of above
-      } else {
-        // Manual mode, no timeout or anything
-        return i.awaitResponse();
+      /* eslint-disable no-fallthrough */
+      switch (data.ackBehavior) {
+        case CommandAcknowledgementType.AutoEphemeral:
+          e = true;
+        case CommandAcknowledgementType.Auto || undefined:
+          data.fn(i, options); // Run in background
+          setTimeout(() => i.defer(e), 1500); // Defer if no reply in 1500ms
+        case CommandAcknowledgementType.Manual:
+          return await i.awaitResponse();
       }
     }
 

@@ -159,32 +159,32 @@ export class ApplicationCommandInteraction extends Interaction {
 
   /** Gets a cached user. */
   getUser(id: string) {
-    if (this.resolved) return this.resolved.user(id);
+    return this.resolved?.user(id) || this.resolved?.member(id)?.user;
   }
 
   /** Gets a cached member. */
   getMember(id: string) {
-    if (this.resolved) return this.resolved.member(id);
+    return this.resolved?.member(id);
   }
 
   /** Gets a cached role. */
   getRole(id: string) {
-    if (this.resolved) return this.resolved.role(id);
+    return this.resolved?.role(id);
   }
 
   /** Gets a cached channel. */
   getChannel(id: string) {
-    if (this.resolved) return this.resolved.channel(id);
+    return this.resolved?.channel(id);
   }
 
   /** Gets a cached message. */
   getMessage(id: string) {
-    if (this.resolved) return this.resolved.message(id);
+    return this.resolved?.message(id);
   }
 
   /** Gets a cached attachment. */
   getAttachment(id: string) {
-    if (this.resolved) return this.resolved.attachment(id);
+    return this.resolved?.attachment(id);
   }
 
   /** True if this is a ChatInputInteraction */
