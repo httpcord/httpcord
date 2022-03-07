@@ -1,5 +1,5 @@
 import APIManager from "../../../API";
-import { ApplicationCommandInteraction } from ".";
+import { ApplicationCommandInteraction } from "./Base";
 import {
   APIApplicationCommandInteractionDataBasicOption,
   APIApplicationCommandInteractionDataSubcommandOption,
