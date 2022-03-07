@@ -1,5 +1,5 @@
 import Express from "express";
-import { InteractionServer } from ".";
+import { InteractionServer } from "./Base";
 import { ERaw, EVerify, EJSONBody } from "../Middleware";
 import { ExpressServerConfig } from "./Config";
 
@@ -15,7 +15,7 @@ export class ExpressServer extends InteractionServer {
 
     if ("app" in config) {
       config.app.post(config.url || "/", ERaw, verify, EJSONBody, this.resp);
-    } else if ("router" in config) {
+    } else {
       config.router.post("/", ERaw, verify, EJSONBody, this.resp);
     }
   }

@@ -10,6 +10,7 @@ import { APIInteraction, APIInteractionResponse } from "../Types";
 import { InteractionServerConfig } from "./Config";
 
 const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
+
 /**
  * Represents an interaction server. It takes a public key (and optionally bot
  * token) and in return gives a bare-bones interaction server. Use it by calling
