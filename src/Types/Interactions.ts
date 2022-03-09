@@ -1,17 +1,18 @@
 import {
   APIApplicationCommandAutocompleteInteraction,
+  APIApplicationCommandAutocompleteResponse,
   APIApplicationCommandInteraction,
+  APIChatInputApplicationCommandInteractionDataResolved,
   APIInteractionResponseChannelMessageWithSource,
   APIInteractionResponseDeferredChannelMessageWithSource,
   APIInteractionResponseDeferredMessageUpdate,
   APIInteractionResponseUpdateMessage,
+  APIMessageApplicationCommandInteractionDataResolved,
   APIMessageComponentInteraction,
   APIModalInteractionResponse,
   APIModalSubmitInteraction,
-  APIWebhook,
-  APIChatInputApplicationCommandInteractionDataResolved,
   APIUserApplicationCommandInteractionDataResolved,
-  APIMessageApplicationCommandInteractionDataResolved,
+  APIWebhook,
 } from "./DiscordAPITypes";
 
 /**
@@ -115,6 +116,13 @@ export type MessageComponentInteractionResponse =
 export type ModalInteractionResponse =
   | APIInteractionResponseChannelMessageWithSource
   | APIInteractionResponseDeferredChannelMessageWithSource;
+
+/** Represents a valid response for any user-initiated interaction */
+export type UserInitiatedInteractionResponse =
+  | APIApplicationCommandAutocompleteResponse
+  | ApplicationCommandInteractionResponse
+  | MessageComponentInteractionResponse
+  | ModalInteractionResponse;
 
 /** Represents any interaction that a user initiated (i.e. anything but ping) */
 export type APIUserInitiatedInteraction =

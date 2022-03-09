@@ -10,6 +10,8 @@ import { sleep } from "../../../Utils";
 import { Interaction } from "../Interaction";
 import { ResolvedManager } from "../ResolvedManager";
 
+type ChatInputInteraction = import("./ChatInput").ChatInputInteraction;
+
 export class ApplicationCommandInteraction extends Interaction {
   protected resolved?: ResolvedManager;
   protected webhook: InteractionWebhook;
@@ -188,7 +190,7 @@ export class ApplicationCommandInteraction extends Interaction {
   }
 
   /** True if this is a ChatInputInteraction */
-  isChatInputCommand(): this is import("./ChatInput").ChatInputInteraction {
+  isChatInputCommand(): this is ChatInputInteraction {
     return this.commandType === ApplicationCommandType.ChatInput;
   }
 

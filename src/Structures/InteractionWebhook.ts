@@ -3,6 +3,7 @@ import { Interaction } from ".";
 import APIManager from "../API";
 import {
   APIMessage,
+  APIInteractionResponse,
   RESTPatchAPIWebhookWithTokenMessageJSONBody as JSONEditWebhook,
 } from "../Types";
 

@@ -7,6 +7,15 @@ import {
 } from "../../Types";
 import { sleep } from "../../Utils";
 
+type ApplicationCommandInteraction =
+  import("./ApplicationCommands").ApplicationCommandInteraction;
+
+type MessageComponentInteraction =
+  import("./MessageComponent").MessageComponentInteraction;
+
+type AutocompleteInteraction =
+  import("./ApplicationCommands").AutocompleteInteraction;
+
 /** Represents a generic interaction. */
 export class Interaction {
   rawData: APIInteraction;
@@ -78,17 +87,17 @@ export class Interaction {
   }
 
   /** True if this is an ApplicationCommandInteraction */
-  isApplicationCommand(): this is import("./ApplicationCommands").ApplicationCommandInteraction {
+  isApplicationCommand(): this is ApplicationCommandInteraction {
     return this.type === InteractionType.ApplicationCommand;
   }
 
   /** True if this is a MessageComponentInteraction */
-  isMessageComponent(): this is import("./MessageComponent").MessageComponentInteraction {
+  isMessageComponent(): this is MessageComponentInteraction {
     return this.type === InteractionType.MessageComponent;
   }
 
-  /** True if this is an ApplicationCommandAutocompleteInteraction */
-  isApplicationCommandAutocomplete() {
+  /** True if this is an AutocompleteInteraction */
+  isApplicationCommandAutocomplete(): this is AutocompleteInteraction {
     return this.type === InteractionType.ApplicationCommandAutocomplete;
   }
 

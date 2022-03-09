@@ -6,7 +6,12 @@ import {
   Interaction,
   MessageComponentInteraction,
 } from "../Structures";
-import { APIInteraction, APIInteractionResponse } from "../Types";
+import {
+  APIInteraction,
+  APIInteractionResponse,
+  MessageComponentInteractionResponse,
+  ApplicationCommandInteractionResponse,
+} from "../Types";
 import { InteractionServerConfig } from "./Config";
 
 const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));

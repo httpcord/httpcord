@@ -40,14 +40,14 @@ export type BaseOptionData = {
 /** Data specifically for string option type. */
 export type StringOptionData = BaseOptionData & {
   type: OptionType.String;
-  choices?: APIApplicationCommandOptionChoice<string>[];
+  choices?: readonly APIApplicationCommandOptionChoice<string>[];
   autocomplete?: boolean;
 };
 
 /** Data specifically for number-based option types. */
 export type NumberOptionData = BaseOptionData & {
   type: OptionType.Integer | OptionType.Number;
-  choices?: APIApplicationCommandOptionChoice<number>[];
+  choices?: readonly APIApplicationCommandOptionChoice<number>[];
   autocomplete?: boolean;
   minValue?: number;
   maxValue?: number;
@@ -88,6 +88,9 @@ export const defaultOptionConfig: Omit<BaseOptionConfig, "description"> = {
 export abstract class OptionProvider {
   /** Creates a string option. */
   string(d: string): string;
+  string<T extends readonly APIApplicationCommandOptionChoice<string>[]>(
+    d: StringOptionConfig & { choices: T }
+  ): T[number]["value"];
   string(d: StringOptionConfig & { required: false }): string | undefined;
   string(d: StringOptionConfig): string;
   string(d: StringOptionConfig | string): string | undefined {
@@ -264,13 +267,11 @@ export class ChatInputCommandManager {
 
     if (data) {
       const options = resolveIncomingOptions(i);
-      let e = false;
+      const e = data.ackBehavior === CommandAcknowledgementType.AutoEphemeral;
 
       /* eslint-disable no-fallthrough */
       switch (data.ackBehavior) {
-        case CommandAcknowledgementType.AutoEphemeral:
-          e = true;
-        case CommandAcknowledgementType.Auto || undefined:
+        default:
           data.fn(i, options); // Run in background
           setTimeout(() => i.defer(e), 1500); // Defer if no reply in 1500ms
         case CommandAcknowledgementType.Manual:
@@ -280,4 +281,29 @@ export class ChatInputCommandManager {
 
     return { type: 4, data: { content: "httpcord: unknown command" } };
   }
+}
+
+const thing = new ChatInputCommandManager();
+
+thing.register(
+  {
+    name: "test",
+    description: "testing",
+    options: (opts) => ({
+      name: opts.string({
+        description: "test",
+        choices: [{ name: "test", value: "testing" }],
+      }),
+    }),
+  },
+  async (i, { name }) => {
+    await i.respond(name);
+  }
+);
+
+function test<T>(
+  c: { name: string; opts: (opts: OptionProvider) => ResolvedOptions<T> },
+  fn: Callback<T>
+) {
+  return true;
 }

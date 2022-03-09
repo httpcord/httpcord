@@ -3,8 +3,10 @@ import APIManager from "../../API";
 import {
   APIMessageComponentInteraction,
   ComponentType,
+  MessageComponentInteractionResponse,
   RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
 } from "../../Types";
+import { sleep } from "../../Utils";
 import { Interaction } from "./Interaction";
 
 /** Represents a message component interaction sent from a text message. */
@@ -15,7 +17,8 @@ export class MessageComponentInteraction extends Interaction {
   customId: string;
   componentType: ComponentType;
   message: Message;
-  selected: string[] | null = null;
+  selected?: string[];
+  response?: MessageComponentInteractionResponse;
 
   /** Whether the interaction has been responded to with an actual message. */
   replied = false;
@@ -36,13 +39,22 @@ export class MessageComponentInteraction extends Interaction {
   }
 
   /**
+   * Waits until the interaction HTTP response is available then returns it.
+   * WARNING: This has no timeout. Implement your own or risk waiting forever.
+   */
+  async awaitResponse() {
+    while (!this.response) await sleep(200);
+    return this.response;
+  }
+
+  /**
    * Defers the interaction. The user sees a "loading" state.
    */
-  defer(ephemeral?: boolean) {
+  defer(ephemeral?: boolean, edit?: boolean) {
     if (this.replied || this.deferred) return;
     this.deferred = true;
     this.ephemeral = ephemeral || false;
-    this.response = { type: 5, data: { flags: ephemeral ? 64 : 0 } };
+    this.response = { type: edit ? 6 : 5, data: { flags: ephemeral ? 64 : 0 } };
   }
 
   /**
@@ -143,11 +155,16 @@ export class MessageComponentInteraction extends Interaction {
 
   /** True if this is a button interaction */
   isButton() {
-    return this.componentType === ComponentType.Button && !this.selected;
+    return (
+      this.componentType === ComponentType.Button && this.selected === undefined
+    );
   }
 
   /** True if this is a select menu interaction */
   isSelectMenu() {
-    return this.componentType === ComponentType.SelectMenu && this.selected;
+    return (
+      this.componentType === ComponentType.SelectMenu &&
+      this.selected !== undefined
+    );
   }
 }
