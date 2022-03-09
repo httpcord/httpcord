@@ -282,28 +282,3 @@ export class ChatInputCommandManager {
     return { type: 4, data: { content: "httpcord: unknown command" } };
   }
 }
-
-const thing = new ChatInputCommandManager();
-
-thing.register(
-  {
-    name: "test",
-    description: "testing",
-    options: (opts) => ({
-      name: opts.string({
-        description: "test",
-        choices: [{ name: "test", value: "testing" }],
-      }),
-    }),
-  },
-  async (i, { name }) => {
-    await i.respond(name);
-  }
-);
-
-function test<T>(
-  c: { name: string; opts: (opts: OptionProvider) => ResolvedOptions<T> },
-  fn: Callback<T>
-) {
-  return true;
-}
