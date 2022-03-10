@@ -80,7 +80,7 @@ export class InteractionServer {
 
     if (i.isPing()) return { type: 1 };
     if (i.isApplicationCommand()) return this.command.execute(i);
-    if (i.isMessageComponent()) console; // temp
+    if (i.isMessageComponent()) return this.component.execute(i);
     if (i.isApplicationCommandAutocomplete()) console; // temp
     if (i.isModalSubmit()) console; // temp
 
