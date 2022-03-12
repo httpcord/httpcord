@@ -58,31 +58,34 @@ export class ComponentManager {
     const data = this.registered.get(name);
     const options: ResolvedOptions<string[]> = {};
 
-    if (values.length !== (data?.opts || []).length)
+    if (!data)
+      return {
+        type: 4,
+        data: { content: "httpcord: unknown component", flags: 64 },
+      };
+
+    if (values.length !== (data.opts || []).length)
       return {
         type: 4,
         data: {
           content: "httpcord: mismatch between registered and given params",
+          flags: 64,
         },
       };
 
     data?.opts?.forEach((o, i) => Object.defineProperty(options, o, values[i]));
 
-    if (data) {
-      const e = data.ackBehavior === ComponentAcknowledgementType.AutoEphemeral;
-      const edit = data.ackBehavior === ComponentAcknowledgementType.Edit;
+    const e = data.ackBehavior === ComponentAcknowledgementType.AutoEphemeral;
+    const edit = data.ackBehavior === ComponentAcknowledgementType.Edit;
 
-      /* eslint-disable no-fallthrough */
-      switch (data.ackBehavior) {
-        default:
-          data.fn(i, options); // Run in background
-          setTimeout(() => i.defer(e, edit), 1500); // Defer if no reply in 1500ms
-        case ComponentAcknowledgementType.Manual:
-          return await i.awaitResponse();
-      }
+    /* eslint-disable no-fallthrough */
+    switch (data.ackBehavior) {
+      default:
+        data.fn(i, options); // Run in background
+        setTimeout(() => i.defer(e, edit), 1500); // Defer if no reply in 1500ms
+      case ComponentAcknowledgementType.Manual:
+        return await i.awaitResponse();
     }
-
-    return { type: 4, data: { content: "httpcord: unknown component" } };
   }
 
   /**
