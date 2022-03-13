@@ -13,7 +13,7 @@ type CommandData =
   | APIApplicationCommandInteractionDataSubcommandOption
   | APIApplicationCommandInteractionDataSubcommandGroupOption;
 
-function extractSubcommand(d: CommandData): CommandData {
+export function extractSubcommand(d: CommandData): CommandData {
   const options = d.options;
   if (options?.length !== 1) return d; // Either no options or more than 1
 

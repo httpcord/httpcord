@@ -3,15 +3,11 @@ import { CommandManager, ComponentManager } from "../Managers";
 import { JSONBody, Raw, Verify } from "../Middleware";
 import {
   ApplicationCommandInteraction,
+  AutocompleteInteraction,
   Interaction,
   MessageComponentInteraction,
 } from "../Structures";
-import {
-  APIInteraction,
-  APIInteractionResponse,
-  MessageComponentInteractionResponse,
-  ApplicationCommandInteractionResponse,
-} from "../Types";
+import { APIInteraction, APIInteractionResponse } from "../Types";
 import { InteractionServerConfig } from "./Config";
 
 const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
@@ -38,6 +34,13 @@ export class InteractionServer {
    */
   constructor(config: InteractionServerConfig) {
     this.verify = Verify(config.publicKey);
+    if (config.registerCommands) {
+      setTimeout(this.registerCommands.bind(this), config.registerCommands);
+    }
+  }
+
+  private registerCommands() {
+    this.slash;
   }
 
   /**
@@ -73,7 +76,7 @@ export class InteractionServer {
 
     if (d.type === 2) interactionType = ApplicationCommandInteraction;
     if (d.type === 3) interactionType = MessageComponentInteraction;
-    if (d.type === 4) console; // temp
+    if (d.type === 4) interactionType = AutocompleteInteraction; // temp
     if (d.type === 5) console; // temp
 
     const i = new interactionType(this.api, d);
@@ -81,7 +84,7 @@ export class InteractionServer {
     if (i.isPing()) return { type: 1 };
     if (i.isApplicationCommand()) return this.command.execute(i);
     if (i.isMessageComponent()) return this.component.execute(i);
-    if (i.isApplicationCommandAutocomplete()) console; // temp
+    if (i.isApplicationCommandAutocomplete()) return this.command.complete(i);
     if (i.isModalSubmit()) console; // temp
 
     // Default for unimplemented interaction types

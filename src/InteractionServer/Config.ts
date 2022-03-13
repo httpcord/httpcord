@@ -2,6 +2,8 @@ import { Application, Router } from "express";
 
 export type InteractionServerConfig = {
   publicKey: string;
+  token?: string;
+  registerCommands?: number | false;
 };
 
 export type ExpressServerConfig =

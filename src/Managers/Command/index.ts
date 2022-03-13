@@ -7,6 +7,7 @@ import { ChatInputCommandManager } from "./ChatInput";
 
 export class CommandManager {
   readonly slash = new ChatInputCommandManager();
+  readonly complete = this.slash.autocomplete;
 
   async execute(
     i: ApplicationCommandInteraction
