@@ -20,7 +20,7 @@ const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
  * granular control, allowing you to use it pretty much anywhere JavaScript runs
  */
 export class InteractionServer {
-  protected api = new APIManager();
+  protected api: APIManager;
   protected command = new CommandManager();
   private verify: ReturnType<typeof Verify>;
 
@@ -30,17 +30,39 @@ export class InteractionServer {
 
   /**
    * Creates a new interaction server.
-   * @param {config} Config - the configuration to use
+   * @param {InteractionServerConfig} Config - the configuration to use
    */
   constructor(config: InteractionServerConfig) {
     this.verify = Verify(config.publicKey);
-    if (config.registerCommands) {
-      setTimeout(this.registerCommands.bind(this), config.registerCommands);
+    this.api = new APIManager(config.token);
+
+    if (config.registerCommands !== false && config.token) {
+      const timeout = config.registerCommands || 10000;
+      setTimeout(this.registerCommands.bind(this), timeout);
     }
   }
 
-  private registerCommands() {
-    this.slash;
+  async registerCommands() {
+    const slashConfig = this.slash.generateConfig();
+    // const userConfig = this.user.generateConfig();
+    // const messageConfig = this.message.generateConfig();
+
+    const config = [...slashConfig /* , ...userConfig, ...messageConfig */];
+    console.log(config);
+
+    // Get application ID
+    const app = await this.api.get("/oauth2/applications/@me");
+    if (app.status > 299) {
+      throw new Error(`Failed to register commands - ${app.data.message}`);
+    }
+
+    const appId = app.data.id;
+
+    // PUT commands (overwrite existing ones)
+    const resp = await this.api.put(`/applications/${appId}/commands`, config);
+    if (resp.status > 299) {
+      throw new Error(`Failed to register commands - ${resp.data.message}`);
+    }
   }
 
   /**

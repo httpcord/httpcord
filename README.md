@@ -37,13 +37,18 @@ app.listen(process.env.PORT || 5000, () => {
 - [ ] Full 'no-bot' functionality
   - [x] Start and listen a server
   - [ ] Ability to register and handle all interaction types
-  - [ ] Respond to all interacion types
+  - [ ] Permissions (although may hold off on that due to perm v2 coming?)
+  - [x] Slash commands
+  - [ ] Context commands
+  - [x] Components
+  - [ ] Modals
+  - [ ] Respond to all interaction types
   - [x] Options like pylon?
   - [ ] APIManager Rate limit handling
   - [ ] APIManager Error handling
 - [ ] Extra bot token functionality
-  - [ ] Supply bot token in config
-  - [ ] Store application command data (name, description) within code and register on startup
-  - [ ] Custom classes for users, interactions, etc...
+  - [x] Supply bot token in config
+  - [x] Store application command data (name, description) within code and register on startup
+  - [x] Custom classes for users, interactions, etc...
   - [ ] Actions on classes e.g. member.kick, user.message, channel.send...
   - [ ] Cache like discordjs?
