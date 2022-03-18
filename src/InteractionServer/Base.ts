@@ -48,19 +48,18 @@ export class InteractionServer {
     // const messageConfig = this.message.generateConfig();
 
     const config = [...slashConfig /* , ...userConfig, ...messageConfig */];
-    console.log(config);
 
     // Get application ID
     const app = await this.api.get("/oauth2/applications/@me");
-    if (app.status > 299) {
+    if (app.status > 299 || app.data.message) {
       throw new Error(`Failed to register commands - ${app.data.message}`);
     }
 
-    const appId = app.data.id;
+    const appId = app.data.id as string;
 
     // PUT commands (overwrite existing ones)
     const resp = await this.api.put(`/applications/${appId}/commands`, config);
-    if (resp.status > 299) {
+    if (resp.status > 299 || resp.data.message) {
       throw new Error(`Failed to register commands - ${resp.data.message}`);
     }
   }
