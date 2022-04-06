@@ -2,34 +2,35 @@
   "name": "httpcord",
   "version": "0.0.0",
   "description": "Discord HTTP Interaction server",
+  "homepage": "https://httpcord.js.org",
+  "repository": "git+https://github.com/andre4ik3/httpcord.git",
+  "author": "andre4ik3",
+  "license": "ISC",
+  "packageManager": "yarn@3.2.0",
+  "bugs": {
+    "url": "https://github.com/andre4ik3/httpcord/issues"
+  },
   "main": "dist",
   "scripts": {
-    "build": "tsc",
-    "lint": "npx eslint -f .github/workflows/formatter.js src/**/*.ts; exit 0"
+    "build": "yarn dlx -p typescript tsc",
+    "lint": "yarn dlx eslint -f .github/workflows/formatter.js src/**/*.ts; exit 0"
   },
   "dependencies": {
-    "axios": "^0.26.0",
-    "tweetnacl": "^1.0.3",
-    "discord-api-types": "^0.27.3"
+    "@httpcord/rest": "v0.0.0-1830ed7",
+    "discord-api-types": "^0.27.3",
+    "express": "^4.17.3",
+    "fetch-ponyfill": "^7.1.0",
+    "tweetnacl": "^1.0.3"
   },
   "devDependencies": {
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.18",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
+    "@typescript-eslint/parser": "^5.17.0",
     "eslint": "^8.10.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.4",
-    "ts-node": "^10.5.0",
     "typescript": "^4.5.5"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/andre4ik3/httpcord.git"
-  },
-  "author": "andre4ik3",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/andre4ik3/httpcord/issues"
-  },
-  "homepage": "https://github.com/andre4ik3/httpcord#readme"
+  "engines": {
+    "node": ">=16.9.0"
+  }
 }

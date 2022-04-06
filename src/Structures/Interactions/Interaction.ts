@@ -1,9 +1,9 @@
 import { InteractionWebhook, Member, Message, User, Webhook } from "..";
-import APIManager from "../../API";
+import { APIWrapper } from "../../API";
 import {
   APIInteraction,
   APIInteractionResponse,
-  InteractionType,
+  InteractionType
 } from "../../Types";
 import { sleep } from "../../Utils";
 
@@ -19,7 +19,7 @@ type AutocompleteInteraction =
 /** Represents a generic interaction. */
 export class Interaction {
   rawData: APIInteraction;
-  api: APIManager;
+  api: APIWrapper;
   protected webhook: Webhook;
 
   id: string;
@@ -37,7 +37,7 @@ export class Interaction {
   member?: Member;
   response?: APIInteractionResponse;
 
-  constructor(api: APIManager, data: APIInteraction) {
+  constructor(api: APIWrapper, data: APIInteraction) {
     this.rawData = data;
     this.api = api;
 
@@ -54,7 +54,7 @@ export class Interaction {
     if (data.message) this.message = new Message(data.message);
     if (data.user) this.user = new User(data.user);
     if (data.member)
-      this.member = new Member(data.member, new User(data.member.user));
+      this.member = new Member(api, data.member, new User(data.member.user));
 
     this.webhook = new InteractionWebhook(this.api, this);
   }

@@ -1,12 +1,8 @@
-import APIManager from "../../../API";
-import { ApplicationCommandInteraction } from "./Base";
+import { APIWrapper } from "../../../API";
 import {
-  APIApplicationCommandInteractionDataBasicOption,
-  APIApplicationCommandInteractionDataSubcommandOption,
-  APIApplicationCommandInteractionDataSubcommandGroupOption,
-  APIChatInputApplicationCommandInteractionData,
-  APIChatInputApplicationCommandInteraction,
+  APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataSubcommandGroupOption, APIApplicationCommandInteractionDataSubcommandOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData
 } from "../../../Types";
+import { ApplicationCommandInteraction } from "./Base";
 
 type CommandData =
   | APIChatInputApplicationCommandInteractionData
@@ -29,7 +25,7 @@ export class ChatInputInteraction extends ApplicationCommandInteraction {
   subcommandName?: string;
 
   constructor(
-    api: APIManager,
+    api: APIWrapper,
     data: APIChatInputApplicationCommandInteraction
   ) {
     super(api, data);

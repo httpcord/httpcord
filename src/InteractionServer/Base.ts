@@ -1,13 +1,17 @@
-import APIManager from "../API";
+import { APIWrapper } from "../API";
 import { CommandManager, ComponentManager } from "../Managers";
 import { JSONBody, Raw, Verify } from "../Middleware";
 import {
   ApplicationCommandInteraction,
   AutocompleteInteraction,
   Interaction,
-  MessageComponentInteraction,
+  MessageComponentInteraction
 } from "../Structures";
-import { APIInteraction, APIInteractionResponse } from "../Types";
+import {
+  APIApplication as App,
+  APIInteraction,
+  APIInteractionResponse
+} from "../Types";
 import { InteractionServerConfig } from "./Config";
 
 const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
@@ -20,7 +24,7 @@ const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
  * granular control, allowing you to use it pretty much anywhere JavaScript runs
  */
 export class InteractionServer {
-  protected api: APIManager;
+  protected api: APIWrapper;
   protected command = new CommandManager();
   private verify: ReturnType<typeof Verify>;
 
@@ -34,7 +38,7 @@ export class InteractionServer {
    */
   constructor(config: InteractionServerConfig) {
     this.verify = Verify(config.publicKey);
-    this.api = new APIManager(config.token);
+    this.api = new APIWrapper(config.token);
 
     if (config.registerCommands !== false && config.token) {
       const timeout = config.registerCommands || 10000;
@@ -47,21 +51,10 @@ export class InteractionServer {
     // const userConfig = this.user.generateConfig();
     // const messageConfig = this.message.generateConfig();
 
-    const config = [...slashConfig /* , ...userConfig, ...messageConfig */];
+    const body = [...slashConfig /* , ...userConfig, ...messageConfig */];
 
-    // Get application ID
-    const app = await this.api.get("/oauth2/applications/@me");
-    if (app.status > 299 || app.data.message) {
-      throw new Error(`Failed to register commands - ${app.data.message}`);
-    }
-
-    const appId = app.data.id as string;
-
-    // PUT commands (overwrite existing ones)
-    const resp = await this.api.put(`/applications/${appId}/commands`, config);
-    if (resp.status > 299 || resp.data.message) {
-      throw new Error(`Failed to register commands - ${resp.data.message}`);
-    }
+    const app = (await this.api.get("/oauth2/applications/@me")) as App;
+    await this.api.put(`/applications/${app.id}/commands`, { body });
   }
 
   /**
@@ -97,7 +90,7 @@ export class InteractionServer {
 
     if (d.type === 2) interactionType = ApplicationCommandInteraction;
     if (d.type === 3) interactionType = MessageComponentInteraction;
-    if (d.type === 4) interactionType = AutocompleteInteraction; // temp
+    if (d.type === 4) interactionType = AutocompleteInteraction;
     if (d.type === 5) console; // temp
 
     const i = new interactionType(this.api, d);

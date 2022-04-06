@@ -1,10 +1,10 @@
 import { InteractionWebhook } from "../..";
-import APIManager from "../../../API";
+import { APIWrapper } from "../../../API";
 import {
   APIApplicationCommandInteraction,
   ApplicationCommandInteractionResponse,
   ApplicationCommandType,
-  RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
+  RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook
 } from "../../../Types";
 import { sleep } from "../../../Utils";
 import { Interaction } from "../Interaction";
@@ -30,7 +30,7 @@ export class ApplicationCommandInteraction extends Interaction {
   /** Whether the original response/deferral was ephemeral or not. */
   ephemeral?: boolean;
 
-  constructor(api: APIManager, data: APIApplicationCommandInteraction) {
+  constructor(api: APIWrapper, data: APIApplicationCommandInteraction) {
     super(api, data);
     this.rawData = data;
     this.locale = data.locale;
@@ -39,7 +39,7 @@ export class ApplicationCommandInteraction extends Interaction {
     this.commandType = data.data.type;
 
     if ("resolved" in data.data && data.data.resolved !== undefined)
-      this.resolved = new ResolvedManager(data.data.resolved);
+      this.resolved = new ResolvedManager(api, data.data.resolved);
 
     this.webhook = new InteractionWebhook(this.api, this);
   }

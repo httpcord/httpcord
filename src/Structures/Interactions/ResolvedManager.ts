@@ -1,4 +1,5 @@
 import { Attachment, Channel, Member, Message, Role, User } from "..";
+import type { APIWrapper } from "../../API";
 import { APIInteractionDataResolved } from "../../Types";
 
 export class ResolvedManager {
@@ -9,7 +10,7 @@ export class ResolvedManager {
   readonly messages = new Map<string, Message>();
   readonly attachments = new Map<string, Attachment>();
 
-  constructor(data: APIInteractionDataResolved) {
+  constructor(api: APIWrapper, data: APIInteractionDataResolved) {
     if ("users" in data && data.users)
       for (const [k, v] of Object.entries(data.users)) {
         this.users.set(k, new User(v));
@@ -22,12 +23,12 @@ export class ResolvedManager {
 
     if ("members" in data && data.members)
       for (const [k, v] of Object.entries(data.members)) {
-        this.members.set(k, new Member(v, this.users.get(k)!));
+        this.members.set(k, new Member(api, v, this.users.get(k)!));
       }
 
     if ("channels" in data && data.channels)
       for (const [k, v] of Object.entries(data.channels)) {
-        this.channels.set(k, new Channel(v));
+        this.channels.set(k, new Channel(api, v));
       }
 
     if ("messages" in data && data.messages)

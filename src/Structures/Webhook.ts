@@ -1,14 +1,15 @@
-import APIManager from "../API";
+import { APIWrapper } from "../API";
 import {
   APIInteractionWebhook,
   APIMessage,
+  APIWebhook,
   RESTPatchAPIWebhookWithTokenMessageJSONBody as JSONEditWebhook,
   RESTPostAPIWebhookWithTokenJSONBody as JSONExecuteWebhook,
-  WebhookType,
+  WebhookType
 } from "../Types";
 
 export class Webhook {
-  protected api: APIManager;
+  protected api: APIWrapper;
   protected token: string;
 
   id: string;
@@ -20,7 +21,7 @@ export class Webhook {
   channelId?: string;
   name?: string;
 
-  constructor(api: APIManager, data: APIInteractionWebhook, token: string) {
+  constructor(api: APIWrapper, data: APIInteractionWebhook, token: string) {
     this.api = api;
     this.token = token;
 
@@ -34,28 +35,27 @@ export class Webhook {
     this.name = data.name || undefined;
   }
 
-  static async fromToken(api: APIManager, id: string, token: string) {
-    const data = await api.get(`/webhooks/${id}/${token}`);
-    return new Webhook(api, data.data, token);
+  static async fromToken(api: APIWrapper, id: string, token: string) {
+    const data = (await api.get(`/webhooks/${id}/${token}`)) as APIWebhook;
+    return new Webhook(api, data, token);
   }
 
-  async execute(d: JSONExecuteWebhook) {
-    const data = await this.api.post(this.url, d);
-    if (data.status < 300) return data.data as APIMessage;
+  async execute(body: JSONExecuteWebhook) {
+    const data = await this.api.post(this.url, { body });
+    return data as APIMessage;
   }
 
   async getMessage(id: string) {
     const data = await this.api.get(`${this.url}/messages/${id}`);
-    if (data.status < 300) return data.data as APIMessage;
+    return data as APIMessage;
   }
 
-  async editMessage(id: string, d: JSONEditWebhook) {
-    const data = await this.api.patch(`${this.url}/messages/${id}`, d);
-    if (data.status < 300) return data.data as APIMessage;
+  async editMessage(id: string, body: JSONEditWebhook) {
+    const data = await this.api.patch(`${this.url}/messages/${id}`, { body });
+    return data as APIMessage;
   }
 
   async deleteMessage(id: string) {
-    const data = await this.api.delete(`${this.url}/messages/${id}`);
-    return data.status < 300;
+    await this.api.delete(`${this.url}/messages/${id}`);
   }
 }

@@ -1,14 +1,11 @@
-import { extractSubcommand } from "./ChatInput";
-import { Interaction } from "../Interaction";
-import APIManager from "../../../API";
-import { sleep } from "../../../Utils";
+import { APIWrapper } from "../../../API";
 import {
   APIApplicationCommandAutocompleteInteraction,
-  APIApplicationCommandAutocompleteResponse,
-  APIApplicationCommandOptionChoice,
-  APIApplicationCommandInteractionDataBasicOption,
-  ApplicationCommandType,
+  APIApplicationCommandAutocompleteResponse, APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandOptionChoice, ApplicationCommandType
 } from "../../../Types";
+import { sleep } from "../../../Utils";
+import { Interaction } from "../Interaction";
+import { extractSubcommand } from "./ChatInput";
 
 export class AutocompleteInteraction extends Interaction {
   rawData: APIApplicationCommandAutocompleteInteraction;
@@ -25,7 +22,7 @@ export class AutocompleteInteraction extends Interaction {
   locale: string;
 
   constructor(
-    api: APIManager,
+    api: APIWrapper,
     data: APIApplicationCommandAutocompleteInteraction
   ) {
     super(api, data);

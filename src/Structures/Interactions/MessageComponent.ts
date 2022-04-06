@@ -1,10 +1,10 @@
 import { InteractionWebhook, Message } from "..";
-import APIManager from "../../API";
+import { APIWrapper } from "../../API";
 import {
   APIMessageComponentInteraction,
   ComponentType,
   MessageComponentInteractionResponse,
-  RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook,
+  RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook
 } from "../../Types";
 import { sleep } from "../../Utils";
 import { Interaction } from "./Interaction";
@@ -27,7 +27,7 @@ export class MessageComponentInteraction extends Interaction {
   /** Whether the original response/deferral was ephemeral or not. */
   ephemeral?: boolean;
 
-  constructor(api: APIManager, data: APIMessageComponentInteraction) {
+  constructor(api: APIWrapper, data: APIMessageComponentInteraction) {
     super(api, data);
     this.locale = data.locale;
     this.customId = data.data.custom_id;

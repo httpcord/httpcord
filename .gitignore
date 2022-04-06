@@ -1,4 +1,12 @@
-node_modules
+# Yarn Zero-Installs
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 dist
 
 .nova

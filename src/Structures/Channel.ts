@@ -1,9 +1,10 @@
+import { Permissions } from ".";
+import type { APIWrapper } from "../API";
 import {
   APIInteractionDataResolvedChannel,
-  ChannelType,
   APIThreadMetadata,
+  ChannelType
 } from "../Types";
-import { Permissions } from ".";
 
 export class Channel {
   id: string;
@@ -14,7 +15,7 @@ export class Channel {
   thread?: APIThreadMetadata;
   permissions: Permissions;
 
-  constructor(d: APIInteractionDataResolvedChannel) {
+  constructor(readonly api: APIWrapper, d: APIInteractionDataResolvedChannel) {
     this.id = d.id;
     this.name = d.name;
     this.type = d.type;

@@ -1,5 +1,6 @@
 export * from "./Attachment";
 export * from "./Channel";
+export * from "./Guild";
 export * from "./Interactions";
 export * from "./InteractionWebhook";
 export * from "./Member";

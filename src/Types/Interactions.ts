@@ -1,4 +1,4 @@
-import {
+import type {
   APIApplicationCommandAutocompleteInteraction,
   APIApplicationCommandAutocompleteResponse,
   APIApplicationCommandInteraction,
@@ -12,7 +12,7 @@ import {
   APIModalInteractionResponse,
   APIModalSubmitInteraction,
   APIUserApplicationCommandInteractionDataResolved,
-  APIWebhook,
+  APIWebhook
 } from "./DiscordAPITypes";
 
 /**

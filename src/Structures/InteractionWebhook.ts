@@ -1,14 +1,13 @@
-import { Webhook } from "./Webhook";
 import { Interaction } from ".";
-import APIManager from "../API";
+import { APIWrapper } from "../API";
 import {
   APIMessage,
-  APIInteractionResponse,
-  RESTPatchAPIWebhookWithTokenMessageJSONBody as JSONEditWebhook,
+  RESTPatchAPIWebhookWithTokenMessageJSONBody as JSONEditWebhook
 } from "../Types";
+import { Webhook } from "./Webhook";
 
 export class InteractionWebhook extends Webhook {
-  constructor(api: APIManager, interaction: Interaction) {
+  constructor(api: APIWrapper, interaction: Interaction) {
     super(
       api,
       {
@@ -22,16 +21,15 @@ export class InteractionWebhook extends Webhook {
 
   async getOriginal() {
     const data = await this.api.post(`${this.url}/messages/@original`);
-    if (data.status < 300) return data.data as APIMessage;
+    return data as APIMessage;
   }
 
-  async editOriginal(d: JSONEditWebhook) {
-    const data = await this.api.patch(`${this.url}/messages/@original`, d);
-    if (data.status < 300) return data.data as APIMessage;
+  async editOriginal(body: JSONEditWebhook) {
+    const d = await this.api.patch(`${this.url}/messages/@original`, { body });
+    return d as APIMessage;
   }
 
   async deleteOriginal() {
-    const data = await this.api.delete(`${this.url}/messages/@original`);
-    return data.status < 300;
+    await this.api.delete(`${this.url}/messages/@original`);
   }
 }

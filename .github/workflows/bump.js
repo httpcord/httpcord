@@ -9,5 +9,5 @@ const path = `${process.cwd()}/package.json`;
 fs.readFile(path).then(async (f) => {
   let package = JSON.parse(f);
   const version = `${package.version}-${commitSha}`;
-  cp.execSync(`npm version --no-git-tag-version ${version}`);
+  cp.execSync(`yarn version ${version}`);
 });
