@@ -11,7 +11,7 @@ scaling problems, just throw it in a docker container and put it on Cloud Run :)
 import Express from "express";
 import { ExpressServer } from "httpcord";
 
-const publicKey = process.env["PUBLIC_KEY"] || process.exit(1);
+const publicKey = "N0t_a_Pub1iC_K3y_r3plAce_ME";
 const app = Express();
 const interaction = new ExpressServer({ publicKey, app });
 
@@ -44,8 +44,8 @@ app.listen(process.env.PORT || 5000, () => {
   - [ ] Modals
   - [ ] Respond to all interaction types
   - [x] Options like pylon?
-  - [ ] APIManager Rate limit handling
-  - [ ] APIManager Error handling
+  - [x] APIManager Rate limit handling
+  - [x] APIManager Error handling
 - [ ] Extra bot token functionality
   - [x] Supply bot token in config
   - [x] Store application command data (name, description) within code and register on startup
