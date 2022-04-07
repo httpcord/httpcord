@@ -9,10 +9,10 @@ import {
 } from "../../../Structures";
 import type {
   APIApplicationCommandOptionChoice,
-  ApplicationCommandOptionType as OptionType,
   ChannelType,
   CommandAcknowledgementType
 } from "../../../Types";
+import { ApplicationCommandOptionType as OptionType } from "../../../Types";
 
 /** Mentionable type includes users, members, and roles. */
 export type Mentionable = User | Member | Role;
