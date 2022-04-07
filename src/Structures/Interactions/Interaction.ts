@@ -1,6 +1,6 @@
 import { InteractionWebhook, Member, Message, User, Webhook } from "..";
-import { APIWrapper } from "../../API";
-import {
+import type { APIWrapper } from "../../API";
+import type {
   APIInteraction,
   APIInteractionResponse,
   InteractionType

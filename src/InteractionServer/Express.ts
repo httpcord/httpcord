@@ -1,6 +1,6 @@
-import Express from "express";
+import type Express from "express";
+import { EJSONBody, ERaw, EVerify } from "../Middleware";
 import { InteractionServer } from "./Base";
-import { ERaw, EVerify, EJSONBody } from "../Middleware";
 import { ExpressServerConfig } from "./Config";
 
 /**

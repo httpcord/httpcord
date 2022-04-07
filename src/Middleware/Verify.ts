@@ -1,4 +1,4 @@
-import Express from "express";
+import type Express from "express";
 import NaCl from "tweetnacl";
 
 export const Verify = (key: string) => (req: Request, body: string) => {

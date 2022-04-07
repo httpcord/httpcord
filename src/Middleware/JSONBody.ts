@@ -1,4 +1,4 @@
-import Express from "express";
+import type Express from "express";
 
 export const JSONBody = (body: string) => {
   try {

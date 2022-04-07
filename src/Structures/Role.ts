@@ -1,4 +1,4 @@
-import { APIRole } from "discord-api-types/v10";
+import type { APIRole } from "../Types";
 
 export class Role {
   id: string;

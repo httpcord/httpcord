@@ -1,4 +1,4 @@
-import { Application, Router } from "express";
+import type { Application, Router } from "express";
 
 export type InteractionServerConfig = {
   publicKey: string;

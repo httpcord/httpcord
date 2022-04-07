@@ -1,6 +1,6 @@
 import { Interaction } from ".";
-import { APIWrapper } from "../API";
-import {
+import type { APIWrapper } from "../API";
+import type {
   APIMessage,
   RESTPatchAPIWebhookWithTokenMessageJSONBody as JSONEditWebhook
 } from "../Types";

@@ -6,7 +6,7 @@ import {
   Role,
   User
 } from "../../../Structures";
-import {
+import type {
   APIApplicationCommandBasicOption,
   APIApplicationCommandInteractionDataOption,
   ApplicationCommandInteractionResponse,
@@ -14,10 +14,11 @@ import {
   CommandAcknowledgementType,
   RESTPostAPIApplicationCommandsJSONBody
 } from "../../../Types";
-import {
+import type {
   AutocompleteCallback,
   Callback,
-  ChatInputCommandConfig, ConfigurableOptions,
+  ChatInputCommandConfig,
+  ConfigurableOptions,
   Option,
   OptionResolver,
   ResolvedData

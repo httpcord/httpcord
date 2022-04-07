@@ -1,4 +1,4 @@
-import { APIAttachment } from "../Types/";
+import type { APIAttachment } from "../Types";
 
 export class Attachment {
   id: string;

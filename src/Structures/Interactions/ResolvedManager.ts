@@ -1,6 +1,6 @@
 import { Attachment, Channel, Member, Message, Role, User } from "..";
 import type { APIWrapper } from "../../API";
-import { APIInteractionDataResolved } from "../../Types";
+import type { APIInteractionDataResolved } from "../../Types";
 
 export class ResolvedManager {
   readonly users = new Map<string, User>();

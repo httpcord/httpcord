@@ -7,7 +7,7 @@ import {
   Interaction,
   MessageComponentInteraction
 } from "../Structures";
-import {
+import type {
   APIApplication as App,
   APIInteraction,
   APIInteractionResponse
@@ -34,7 +34,7 @@ export class InteractionServer {
 
   /**
    * Creates a new interaction server.
-   * @param {InteractionServerConfig} Config - the configuration to use
+   * @param {InteractionServerConfig} config - the configuration to use
    */
   constructor(config: InteractionServerConfig) {
     this.verify = Verify(config.publicKey);

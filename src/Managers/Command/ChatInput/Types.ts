@@ -5,13 +5,13 @@ import {
   ChatInputInteraction,
   Member,
   Role,
-  User,
+  User
 } from "../../../Structures";
-import {
+import type {
   APIApplicationCommandOptionChoice,
   ApplicationCommandOptionType as OptionType,
   ChannelType,
-  CommandAcknowledgementType,
+  CommandAcknowledgementType
 } from "../../../Types";
 
 /** Mentionable type includes users, members, and roles. */

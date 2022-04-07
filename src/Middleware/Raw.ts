@@ -1,4 +1,4 @@
-import Express from "express";
+import type Express from "express";
 
 export const Raw = (req: Request) => req.text();
 

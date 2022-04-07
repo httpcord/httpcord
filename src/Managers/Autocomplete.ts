@@ -1,4 +1,4 @@
-import { APIApplicationCommandAutocompleteResponse } from "../Types";
+import type { APIApplicationCommandAutocompleteResponse } from "../Types";
 
 type AutocompleteValues<T = string | number> =
   | T

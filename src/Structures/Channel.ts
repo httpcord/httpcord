@@ -1,6 +1,6 @@
 import { Permissions } from ".";
 import type { APIWrapper } from "../API";
-import {
+import type {
   APIInteractionDataResolvedChannel,
   APIThreadMetadata,
   ChannelType

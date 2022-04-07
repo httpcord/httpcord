@@ -1,6 +1,6 @@
 import { InteractionWebhook } from "../..";
-import { APIWrapper } from "../../../API";
-import {
+import type { APIWrapper } from "../../../API";
+import type {
   APIApplicationCommandInteraction,
   ApplicationCommandInteractionResponse,
   ApplicationCommandType,

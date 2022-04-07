@@ -1,5 +1,5 @@
 import { User } from ".";
-import { APIMessage, MessageType } from "../Types";
+import type { APIMessage, MessageType } from "../Types";
 
 export class Message {
   id: string;

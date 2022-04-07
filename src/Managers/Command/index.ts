@@ -1,8 +1,8 @@
 import {
   ApplicationCommandInteraction,
-  ChatInputInteraction,
+  ChatInputInteraction
 } from "../../Structures";
-import { ApplicationCommandInteractionResponse } from "../../Types/";
+import type { ApplicationCommandInteractionResponse } from "../../Types/";
 import { ChatInputCommandManager } from "./ChatInput";
 
 export class CommandManager {

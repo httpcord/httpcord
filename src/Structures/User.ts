@@ -1,4 +1,4 @@
-import { APIUser } from "../Types";
+import type { APIUser } from "../Types";
 
 class UserFlags {
   constructor(readonly bits: number) {}
