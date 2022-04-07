@@ -1,7 +1,7 @@
 import type Express from "express";
 import { EJSONBody, ERaw, EVerify } from "../Middleware";
 import { InteractionServer } from "./Base";
-import { ExpressServerConfig } from "./Config";
+import type { ExpressServerConfig } from "./Config";
 
 /**
  * This is a server that uses Express under the hood instead of Fetch API

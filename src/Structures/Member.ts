@@ -1,4 +1,4 @@
-import { Role, User } from ".";
+import type { Role, User } from ".";
 import type { APIWrapper } from "../API";
 import type { APIInteractionDataResolvedGuildMember } from "../Types";
 

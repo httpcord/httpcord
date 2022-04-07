@@ -1,4 +1,4 @@
-import { MessageComponentInteraction } from "../Structures";
+import type { MessageComponentInteraction } from "../Structures";
 import type { MessageComponentInteractionResponse } from "../Types";
 import { ComponentAcknowledgementType } from "../Types";
 

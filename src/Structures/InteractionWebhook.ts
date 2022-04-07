@@ -1,4 +1,4 @@
-import { Interaction } from ".";
+import type { Interaction } from ".";
 import type { APIWrapper } from "../API";
 import type {
   APIMessage,

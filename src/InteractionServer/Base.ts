@@ -12,7 +12,7 @@ import type {
   APIInteraction,
   APIInteractionResponse
 } from "../Types";
-import { InteractionServerConfig } from "./Config";
+import type { InteractionServerConfig } from "./Config";
 
 const respond = (t: Record<string, any>) => new Response(JSON.stringify(t));
 

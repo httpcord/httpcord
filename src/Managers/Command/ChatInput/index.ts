@@ -1,10 +1,8 @@
-import {
-  Attachment,
-  AutocompleteInteraction,
+import type {
+  Attachment, AutocompleteInteraction,
   Channel,
   ChatInputInteraction,
-  Role,
-  User
+  Role, User
 } from "../../../Structures";
 import type {
   APIApplicationCommandBasicOption,
