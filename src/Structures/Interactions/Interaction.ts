@@ -1,10 +1,7 @@
 import { InteractionWebhook, Member, Message, User, Webhook } from "..";
 import type { APIWrapper } from "../../API";
-import type {
-  APIInteraction,
-  APIInteractionResponse,
-  InteractionType
-} from "../../Types";
+import type { APIInteraction, APIInteractionResponse } from "../../Types";
+import { InteractionType } from "../../Types";
 import { sleep } from "../../Utils";
 
 type ApplicationCommandInteraction =

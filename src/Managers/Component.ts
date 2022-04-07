@@ -1,8 +1,6 @@
 import { MessageComponentInteraction } from "../Structures";
-import type {
-  ComponentAcknowledgementType,
-  MessageComponentInteractionResponse
-} from "../Types";
+import type { MessageComponentInteractionResponse } from "../Types";
+import { ComponentAcknowledgementType } from "../Types";
 
 export type MessageComponentConfig<T extends readonly string[]> = {
   name: string;

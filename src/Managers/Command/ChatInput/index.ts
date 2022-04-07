@@ -10,9 +10,11 @@ import type {
   APIApplicationCommandBasicOption,
   APIApplicationCommandInteractionDataOption,
   ApplicationCommandInteractionResponse,
-  ApplicationCommandOptionType as OptionType,
-  CommandAcknowledgementType,
   RESTPostAPIApplicationCommandsJSONBody
+} from "../../../Types";
+import {
+  ApplicationCommandOptionType as OptionType,
+  CommandAcknowledgementType
 } from "../../../Types";
 import type {
   AutocompleteCallback,
@@ -20,9 +22,9 @@ import type {
   ChatInputCommandConfig,
   ConfigurableOptions,
   Option,
-  OptionResolver,
   ResolvedData
 } from "./Types";
+import { OptionResolver } from "./Types";
 
 function resolveIncomingOptions(
   i: ChatInputInteraction | AutocompleteInteraction

@@ -2,10 +2,10 @@ import { InteractionWebhook, Message } from "..";
 import type { APIWrapper } from "../../API";
 import type {
   APIMessageComponentInteraction,
-  ComponentType,
   MessageComponentInteractionResponse,
   RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook
 } from "../../Types";
+import { ComponentType } from "../../Types";
 import { sleep } from "../../Utils";
 import { Interaction } from "./Interaction";
 

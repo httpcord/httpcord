@@ -3,9 +3,9 @@ import type { APIWrapper } from "../../../API";
 import type {
   APIApplicationCommandInteraction,
   ApplicationCommandInteractionResponse,
-  ApplicationCommandType,
   RESTPostAPIInteractionFollowupJSONBody as RESTEditWebhook
 } from "../../../Types";
+import { ApplicationCommandType } from "../../../Types";
 import { sleep } from "../../../Utils";
 import { Interaction } from "../Interaction";
 import { ResolvedManager } from "../ResolvedManager";
