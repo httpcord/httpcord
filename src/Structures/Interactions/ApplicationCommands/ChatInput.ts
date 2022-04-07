@@ -1,6 +1,10 @@
-import tyoe { APIWrapper } from "../../../API";
+import type { APIWrapper } from "../../../API";
 import type {
-  APIApplicationCommandInteractionDataBasicOption, APIApplicationCommandInteractionDataSubcommandGroupOption, APIApplicationCommandInteractionDataSubcommandOption, APIChatInputApplicationCommandInteraction, APIChatInputApplicationCommandInteractionData
+  APIApplicationCommandInteractionDataBasicOption,
+  APIApplicationCommandInteractionDataSubcommandGroupOption,
+  APIApplicationCommandInteractionDataSubcommandOption,
+  APIChatInputApplicationCommandInteraction,
+  APIChatInputApplicationCommandInteractionData
 } from "../../../Types";
 import { ApplicationCommandInteraction } from "./Base";
 
