@@ -2,7 +2,8 @@ name: "CI"
 on: "push"
 
 jobs:
-  Lint:
+  Verify-Cache:
+    name: "Verify Cache"
     runs-on: "ubuntu-latest"
 
     steps:
@@ -19,8 +20,27 @@ jobs:
       - name: "Lint Code"
         run: "yarn lint"
 
+  Lint:
+    runs-on: "ubuntu-latest"
+    needs: [Verify-Cache]
+
+    steps:
+      - name: "Checkout Repository"
+        uses: actions/checkout@v2
+
+      - name: "Setup Node.JS"
+        uses: actions/setup-node@v2
+        with: { node-version: "16" }
+
+      - name: "Check & Install Dependencies"
+        run: "yarn --immutable --immutable-cache"
+
+      - name: "Lint Code"
+        run: "yarn lint"
+
   Build:
     runs-on: "ubuntu-latest"
+    needs: [Verify-Cache]
 
     steps:
       - name: "Checkout Repository"
@@ -37,9 +57,10 @@ jobs:
         run: "yarn build --noEmit"
 
   Test:
+    strategy: { matrix: { node: [12, 14, 16, 17] } }
+    name: "Test (Node ${{ matrix.node }})"
     runs-on: ubuntu-latest
     needs: [Lint, Build]
-    strategy: { matrix: { node: [12, 14, 16, 17] } }
 
     steps:
       - name: "Checkout Repository"
