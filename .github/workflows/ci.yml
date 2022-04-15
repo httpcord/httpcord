@@ -53,9 +53,6 @@ jobs:
       - name: "Check & Install Dependencies"
         run: "yarn --immutable --immutable-cache"
 
-      - name: "Compile Code"
-        run: "yarn build --noEmit"
-
   Test:
     strategy: { matrix: { node: [12, 14, 16, 17] } }
     name: "Test (Node ${{ matrix.node }})"
@@ -101,6 +98,12 @@ jobs:
 
       - name: "Bump Version"
         run: "node .github/workflows/bump.js ${{ github.sha }}"
+
+        # These files do not affect installation and only bloat package size.
+      - name: "Cleanup Unnecessary Files"
+        run: |
+          rm -rf src .yarn
+          rm .pnp.cjs .pnp.loader.mjs
 
       - name: "Publish to NPM"
         env: { NPM_TOKEN: "${{ secrets.NPM_TOKEN }}" }
