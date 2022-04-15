@@ -1,5 +1,6 @@
 {
   "include": ["src"],
+  "exclude": ["src/**/*.test.ts"],
   "compilerOptions": {
     "target": "ES6",
     "module": "CommonJS",
@@ -9,6 +10,7 @@
     "sourceMap": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
     "outDir": "dist",
     "declaration": true
   }

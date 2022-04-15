@@ -7,6 +7,9 @@
 !.yarn/sdks
 !.yarn/versions
 
+# Istanbul code coverage (maybe upload this elsewhere someday)
+coverage
+
 dist
 
 .nova
