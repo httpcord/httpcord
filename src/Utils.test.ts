@@ -1,14 +1,15 @@
 import { RequiresToken, sleep } from "./Utils";
 
-const marginOfError = 25;
+const marginOfError = 10;
 
 describe("Utils/Sleep", () => {
   it("Sleeps for a second", async () => {
-    const time = performance.now();
+    const time = Date.now();
     await sleep(1000);
-    const time2 = performance.now();
+    const time2 = Date.now();
 
-    expect(time2 - time).toBeGreaterThan(1000 - marginOfError);
+    console.log(time2 - time);
+    expect(time2 - time).toBeGreaterThan(1000);
     expect(time2 - time).toBeLessThan(1000 + marginOfError);
   });
 });
