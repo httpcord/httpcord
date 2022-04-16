@@ -18,7 +18,7 @@ jobs:
         run: "yarn --immutable --immutable-cache --check-cache"
 
       - name: "Lint Code"
-        run: "yarn lint"
+        run: "yarn ci-lint"
 
   Lint:
     runs-on: "ubuntu-latest"

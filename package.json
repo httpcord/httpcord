@@ -14,7 +14,8 @@
   "scripts": {
     "build": "yarn dlx -p typescript tsc",
     "test": "yarn node --experimental-vm-modules $(yarn bin jest)",
-    "lint": "yarn dlx eslint -f .github/workflows/formatter.js src/**/*.ts; exit 0"
+    "lint": "yarn dlx eslint src/**/*.ts",
+    "ci-lint": "yarn lint -f .github/workflows/formatter.js; exit 0"
   },
   "dependencies": {
     "@httpcord/rest": "v0.0.0-1830ed7",
