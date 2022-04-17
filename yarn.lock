@@ -421,14 +421,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@httpcord/rest@npm:^0.0.0-9687f6a":
-  version: 0.0.0-ff76396
-  resolution: "@httpcord/rest@npm:0.0.0-ff76396"
+"@httpcord/rest@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@httpcord/rest@npm:1.0.0"
   dependencies:
     "@deno/shim-timers": ~0.1.0
-    "@types/node": 17.0.24
     undici: ^4.12.1
-  checksum: d175f2bee50db3a68393c8e989d340a9f52cb403cf4101e6c95b9f156c523e1c9b14cf88961bb9d0a4f2c58e742d37735a37bc6ce9ce9b4a02da3facfa0591e8
+  checksum: 4119069f417bdf990c7023ec9feefce9a06cb217901bac9dd8fd547974a1b4efd54ae383362a84ed14be4e49e9853935e6840aec4bbcea69fb8e1688a66dfee6
   languageName: node
   linkType: hard
 
@@ -919,13 +918,6 @@ __metadata:
   version: 17.0.23
   resolution: "@types/node@npm:17.0.23"
   checksum: a3517554737cbb042e76c30d0e5482192ac4d9bea0eeb086e2622d9cabf460a0eb52a696b99fcd18e7fcc93c96db6cc7ae507f6608f256ef0b5c1d8c87a5a470
-  languageName: node
-  linkType: hard
-
-"@types/node@npm:17.0.24":
-  version: 17.0.24
-  resolution: "@types/node@npm:17.0.24"
-  checksum: 9e7c4f863601b2430b4c2429a89935f22eba692956f5013c90a4c7fb0e1401ed8add8c4307453c5d6b8b985384500f8c3f644427ab88632640cc396159af479a
   languageName: node
   linkType: hard
 
@@ -2550,7 +2542,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "httpcord@workspace:."
   dependencies:
-    "@httpcord/rest": ^0.0.0-9687f6a
+    "@httpcord/rest": ^1.0.0
     "@types/express": ^4.17.13
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.18

@@ -1,6 +1,6 @@
 {
   "name": "httpcord",
-  "version": "0.0.0-dev.0",
+  "version": "0.0.0-dev.1",
   "description": "Discord HTTP Interaction server",
   "homepage": "https://httpcord.js.org",
   "repository": "git+https://github.com/andre4ik3/httpcord.git",
@@ -13,12 +13,13 @@
   "main": "dist",
   "scripts": {
     "build": "yarn dlx -p typescript tsc",
-    "test": "yarn node --experimental-vm-modules $(yarn bin jest)",
+    "test-explanation": "echo https://github.com/facebook/jest/issues/11617",
+    "test": "yarn node --experimental-vm-modules $(yarn bin jest) --maxWorkers=1",
     "lint": "yarn dlx eslint src/**/*.ts",
     "ci-lint": "yarn lint -f .github/workflows/formatter.js; exit 0"
   },
   "dependencies": {
-    "@httpcord/rest": "^0.0.0-9687f6a",
+    "@httpcord/rest": "^1.0.0",
     "discord-api-types": "^0.27.3",
     "fetch-ponyfill": "^7.1.0",
     "tweetnacl": "^1.0.3"

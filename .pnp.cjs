@@ -33,7 +33,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
-            ["@httpcord/rest", "npm:0.0.0-ff76396"],\
+            ["@httpcord/rest", "npm:1.0.0"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.4.1"],\
             ["@types/node", "npm:17.0.23"],\
@@ -836,12 +836,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@httpcord/rest", [\
-        ["npm:0.0.0-ff76396", {\
-          "packageLocation": "./.yarn/cache/@httpcord-rest-npm-0.0.0-ff76396-6943f7a169-d175f2bee5.zip/node_modules/@httpcord/rest/",\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/@httpcord-rest-npm-1.0.0-d2693d3ba9-4119069f41.zip/node_modules/@httpcord/rest/",\
           "packageDependencies": [\
-            ["@httpcord/rest", "npm:0.0.0-ff76396"],\
+            ["@httpcord/rest", "npm:1.0.0"],\
             ["@deno/shim-timers", "npm:0.1.0"],\
-            ["@types/node", "npm:17.0.24"],\
             ["undici", "npm:4.16.0"]\
           ],\
           "linkType": "HARD"\
@@ -1401,13 +1400,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-node-npm-17.0.23-167849e796-a351755473.zip/node_modules/@types/node/",\
           "packageDependencies": [\
             ["@types/node", "npm:17.0.23"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:17.0.24", {\
-          "packageLocation": "./.yarn/cache/@types-node-npm-17.0.24-5b16c4ab89-9e7c4f8636.zip/node_modules/@types/node/",\
-          "packageDependencies": [\
-            ["@types/node", "npm:17.0.24"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -3396,7 +3388,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["httpcord", "workspace:."],\
-            ["@httpcord/rest", "npm:0.0.0-ff76396"],\
+            ["@httpcord/rest", "npm:1.0.0"],\
             ["@types/express", "npm:4.17.13"],\
             ["@types/jest", "npm:27.4.1"],\
             ["@types/node", "npm:17.0.23"],\
