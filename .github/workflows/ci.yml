@@ -106,5 +106,5 @@ jobs:
         env: { NPM_TOKEN: "${{ secrets.NPM_TOKEN }}" }
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm deprecate httpcord@"~$(jq --raw-output '.version' package.json)" "This old development version is no longer supported."
+          npm deprecate httpcord@"~$(jq --raw-output '.version' package.json)" "This old development version is no longer supported." || true
           npm publish --tag dev
