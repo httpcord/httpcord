@@ -83,9 +83,6 @@ jobs:
       - name: "Checkout Repository"
         uses: actions/checkout@v2
 
-      - name: "Setup Deno"
-        uses: denoland/setup-deno@v1
-
       - name: "Setup Node.JS"
         uses: actions/setup-node@v2
         with: { node-version: "16" }
@@ -97,7 +94,7 @@ jobs:
         run: "yarn build"
 
       - name: "Bump Version"
-        run: "deno run --allow-run .github/workflows/bump.ts"
+        run: npm version prerelease --preid=dev --no-git-tag-version
 
         # These files do not affect installation and only bloat package size.
       - name: "Cleanup Unnecessary Files"
@@ -109,4 +106,5 @@ jobs:
         env: { NPM_TOKEN: "${{ secrets.NPM_TOKEN }}" }
         run: |
           echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-          npm publish
+          npm deprecate httpcord@0.0.0-dev.x "This old development version is no longer supported."
+          npm publish --tag dev
