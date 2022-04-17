@@ -83,6 +83,9 @@ jobs:
       - name: "Checkout Repository"
         uses: actions/checkout@v2
 
+      - name: "Setup Deno"
+        uses: denoland/setup-deno@v1
+
       - name: "Setup Node.JS"
         uses: actions/setup-node@v2
         with: { node-version: "16" }
@@ -94,7 +97,7 @@ jobs:
         run: "yarn build"
 
       - name: "Bump Version"
-        run: "node .github/workflows/bump.js ${{ github.sha }}"
+        run: "deno run --allow-run .github/workflows/bump.ts"
 
         # These files do not affect installation and only bloat package size.
       - name: "Cleanup Unnecessary Files"

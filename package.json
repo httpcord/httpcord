@@ -1,6 +1,6 @@
 {
   "name": "httpcord",
-  "version": "0.0.0",
+  "version": "0.0.0-alpha.0",
   "description": "Discord HTTP Interaction server",
   "homepage": "https://httpcord.js.org",
   "repository": "git+https://github.com/andre4ik3/httpcord.git",
@@ -44,5 +44,6 @@
     },
     "testRegex": ".*\\.test\\.ts$",
     "collectCoverage": true
-  }
+  },
+  "stableVersion": "0.0.0"
 }
