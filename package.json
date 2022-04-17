@@ -18,7 +18,7 @@
     "ci-lint": "yarn lint -f .github/workflows/formatter.js; exit 0"
   },
   "dependencies": {
-    "@httpcord/rest": "v0.0.0-1830ed7",
+    "@httpcord/rest": "^0.0.0-9687f6a",
     "discord-api-types": "^0.27.3",
     "fetch-ponyfill": "^7.1.0",
     "tweetnacl": "^1.0.3"

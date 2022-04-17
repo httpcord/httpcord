@@ -8,7 +8,6 @@ describe("Utils/Sleep", () => {
     await sleep(1000);
     const time2 = Date.now();
 
-    console.log(time2 - time);
     expect(time2 - time).toBeGreaterThan(1000);
     expect(time2 - time).toBeLessThan(1000 + marginOfError);
   });
