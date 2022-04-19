@@ -1,7 +1,9 @@
 import type { Request as ERequest, Response as EResponse } from "express";
+import setupFetch from "fetch-ponyfill";
 import NaCl from "tweetnacl";
-import { Headers, Request } from "undici";
 import { EVerify, Verify } from "./Verify";
+
+const { Request, Headers } = setupFetch();
 
 const keyPair = NaCl.sign.keyPair();
 const publicKey = Buffer.from(keyPair.publicKey).toString("hex");
