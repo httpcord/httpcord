@@ -1,5 +1,3 @@
-export const sleep = (ms: number): Promise<void> =>
-  new Promise((r) => setTimeout(r, ms));
-
 export * from "./Bits";
 export * from "./Decorators";
+export * from "./Misc";

@@ -1,5 +1,6 @@
 import type Express from "express";
 import NaCl from "tweetnacl";
+import type { Request } from "undici";
 
 export const Verify = (key: string) => (req: Request, body: string) => {
   if (key === "DISABLE_VERIFICATION") return true;

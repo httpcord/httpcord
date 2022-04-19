@@ -1,9 +1,7 @@
 import type { Request as ERequest, Response as EResponse } from "express";
-import setupFetch from "fetch-ponyfill";
 import NaCl from "tweetnacl";
+import { Headers, Request } from "undici";
 import { EVerify, Verify } from "./Verify";
-
-const { Request, Headers } = setupFetch();
 
 const keyPair = NaCl.sign.keyPair();
 const publicKey = Buffer.from(keyPair.publicKey).toString("hex");
@@ -25,7 +23,7 @@ describe("Middleware/Verify (Fetch API)", () => {
 
   beforeEach(() => {
     verify = Verify(publicKey);
-    req = new Request("", { method: "POST", body });
+    req = new Request("http://localhost", { method: "POST", body });
   });
 
   it("instantiates correctly", () => {
@@ -69,7 +67,7 @@ describe("Middleware/Verify (Fetch API)", () => {
   });
 
   it("disallows requests with no body", () => {
-    const req = new Request("");
+    const req = new Request("http://localhost");
     expect(verify(req, "")).toBe(false);
   });
 });
