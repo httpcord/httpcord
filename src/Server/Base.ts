@@ -33,7 +33,7 @@ export class BaseServer<T = BaseServerConfig> {
     this.cache = new GlobalCacheManager(this.api);
 
     if (config.registerCommands !== false && config.token)
-      setTimeout(() => {}, config.registerCommands ?? 10000);
+      setTimeout(this.registerCommands, config.registerCommands ?? 10000);
   }
 
   /** Registers the server's commands with the Discord API. */
