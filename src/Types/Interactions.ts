@@ -53,6 +53,13 @@ export enum CommandAcknowledgementType {
    * and Interaction#editOriginal won't work at all.
    */
   AutoEphemeral,
+
+  /**
+   * This acknowledgement mode is the same as CommandAcknowledgementType.Auto
+   * and CommandAcknowledgementType.AutoEphemeral, but it will acknowledge the
+   * interaction in an ephemeral way *only if it was not sent in DMs*.
+   */
+  EphemeralIfNotPrivate,
 }
 
 export enum ComponentAcknowledgementType {
@@ -83,12 +90,19 @@ export enum ComponentAcknowledgementType {
   Auto,
 
   /**
-   * This acknowledgement mode is the same as CommandAcknowledgementType.Auto,
+   * This acknowledgement mode is the same as ComponentAcknowledgementType.Auto,
    * but it acknowledges the interaction in an ephemeral way. This means that
    * Interaction#respond will function the same as Interaction#respondEphemeral
    * and Interaction#editOriginal won't work at all.
    */
   AutoEphemeral,
+
+  /**
+   * This acknowledgement mode is the same as ComponentAcknowledgementType.Auto
+   * and ComponentAcknowledgementType.AutoEphemeral, but it will acknowledge the
+   * interaction in an ephemeral way *only if it was not sent in DMs*.
+   */
+  EphemeralIfNotPrivate,
 
   /**
    * This acknowledgement mode is like the Auto type, but instead of creating a
