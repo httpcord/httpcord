@@ -1,83 +1,55 @@
-import type { APIUser } from "../Types";
+import type { APIUser, Snowflake } from "../Types";
+import { UserFlags } from "../Types";
+import { Bits, RequiresToken } from "../Utils";
+import type { ServerLike } from "./Base";
+import { Structure } from "./Base";
 
-class UserFlags {
-  constructor(readonly bits: number) {}
-
-  get isStaff() {
-    return !!(this.bits << 0);
-  }
-
-  get isPartner() {
-    return !!(this.bits << 1);
-  }
-
-  get isHypeSquad() {
-    return !!(this.bits << 2);
-  }
-
-  get isBugHunter() {
-    return !!(this.bits << 3);
-  }
-
-  get isHypeSquadBravery() {
-    return !!(this.bits << 6);
-  }
-
-  get isHypeSquadBrilliance() {
-    return !!(this.bits << 7);
-  }
-
-  get isHypeSquadBalance() {
-    return !!(this.bits << 8);
-  }
-
-  get isNitroEarlySupporter() {
-    return !!(this.bits << 9);
-  }
-
-  // This means that the "user" is not a user, but is a team.
-  // Every team has a user representing it
-  get isTeamPseudoUser() {
-    return !!(this.bits << 10);
-  }
-
-  get isBugHunterGold() {
-    return !!(this.bits << 14);
-  }
-
-  get isVerifiedBot() {
-    return !!(this.bits << 16);
-  }
-
-  get isVerifiedDev() {
-    return !!(this.bits << 17);
-  }
-
-  get isCertifiedModerator() {
-    return !!(this.bits << 18);
-  }
-
-  get isHttpInteractionBot() {
-    return !!(this.bits << 19);
-  }
+/** Represents possible flags that a user can have. */
+export class UserFlagBits extends Bits {
+  public static Flags = UserFlags;
 }
 
-export class User {
-  id: string;
-  username: string;
-  discriminator: string;
-  avatar?: string;
+/** Represents a user on Discord. */
+export class User extends Structure {
+  /** The user's unique ID (snowflake). */
+  public readonly id: Snowflake;
+  /** The user's username. Not unique. */
+  public readonly username: string;
+  /** The user's discriminator. Not unique. */
+  public readonly discriminator: string;
+  /** The user's avatar hash. */
+  public readonly avatar?: string;
 
-  system = false;
-  bot = false;
-  publicFlags = new UserFlags(0);
+  /** Whether the user is a "system" user or not. */
+  public readonly system: boolean = false;
+  /** Whether the user is a "bot" user or not. */
+  public readonly bot: boolean = false;
+  /** The user's public flags. */
+  public readonly publicFlags: UserFlagBits;
 
-  constructor(data: APIUser) {
-    this.id = data.id;
+  /** Represents the DM channel with the user. */
+  private dmChannel?: null;
+
+  public constructor(server: ServerLike, data: APIUser) {
+    super(server);
+
+    this.id = data.id as Snowflake;
     this.username = data.username;
     this.discriminator = data.discriminator;
-    this.avatar = data.avatar || undefined;
-    this.system = data.system || false;
-    this.publicFlags = new UserFlags(data.public_flags || 0);
+    this.avatar = data.avatar ?? undefined;
+    this.system = data.system ?? false;
+    this.bot = data.bot ?? false;
+    this.publicFlags = new UserFlagBits(data.public_flags ?? 0);
+  }
+
+  /**
+   * Sends a message to the user.
+   * @param msg The message to send. Can either be a string or message object.
+   */
+  @RequiresToken
+  public async send(msg: string) {
+    await this.api.post(`/users/@me/channels`);
   }
 }
+// Utility
+export { UserFlags as Flags, UserFlags };
