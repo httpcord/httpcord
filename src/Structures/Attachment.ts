@@ -1,6 +1,8 @@
 import type { APIAttachment } from "../Types";
+import type { ServerLike } from "./Base";
+import { Structure } from "./Base";
 
-export class Attachment {
+export class Attachment extends Structure {
   id: string;
   name: string;
   description?: string;
@@ -13,17 +15,19 @@ export class Attachment {
   width?: number;
   ephemeral = false;
 
-  constructor(d: APIAttachment) {
-    this.id = d.id;
-    this.name = d.filename;
-    this.description = d.description;
-    this.type = d.content_type as `${string}/${string}`;
-    this.size = d.size;
-    this.url = d.url;
-    this.proxyURL = d.proxy_url;
+  constructor(server: ServerLike, data: APIAttachment) {
+    super(server);
 
-    this.height = d.height || undefined;
-    this.width = d.width || undefined;
-    this.ephemeral = !!d.ephemeral;
+    this.id = data.id;
+    this.name = data.filename;
+    this.description = data.description;
+    this.type = data.content_type as `${string}/${string}`;
+    this.size = data.size;
+    this.url = data.url;
+    this.proxyURL = data.proxy_url;
+
+    this.height = data.height ?? undefined;
+    this.width = data.width ?? undefined;
+    this.ephemeral = !!data.ephemeral;
   }
 }
