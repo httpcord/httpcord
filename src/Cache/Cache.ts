@@ -1,39 +1,56 @@
-import type { MaybePromise, Snowflake } from "../Types";
+import type { Maybe, MaybePromise, Snowflake } from "../Types";
+import { CachedValue } from "./Value";
 
-export interface CacheManagerConfig<V> {
-  /** A function that can fetch a structure for a cache manager. */
-  fetch?: (id: Snowflake) => MaybePromise<V>;
+/** Represents a cache sweeper function. */
+export type Sweeper<T> = (
+  cache: Cache<T>,
+  id: Snowflake,
+  data: CachedValue<T>
+) => boolean;
+
+/** Represents the configuration for a cache. */
+export interface CacheConfig<T> {
+  /** A function that can fetch a structure for a cache. */
+  fetch?: (id: Snowflake) => MaybePromise<Maybe<T>>;
 
   /**
-   * A function that periodically runs to sweep the cache. If it returns true,
-   * the structure in cache will be deleted.
+   * A function that runs when an item is considered to be deleted internally.
+   * This includes automatic/manual sweeping and when deciding what should be
+   * deleted when trying to put an item and the cache is full.
    */
-  sweeper?: (cache: CacheManager<V>, id: Snowflake, data: V) => boolean;
+  sweeper?: Sweeper<T>;
 
   /**
    * The interval on which the sweep function will run. Set to 0 to disable.
    * @default 3600000 (1 hour).
    */
   sweepInterval?: number;
+
+  /** The maximum number of items in the cache. */
+  maxSize?: number;
 }
 
 /**
- * Represents a cache manager for any data structure.
+ * Represents a cache for any data structure.
  *
  * It is very flexible and generic, however you must provide your own function
  * to fetch the data from the web or some other source if it is not present.
  */
-export class CacheManager<V> {
-  private map = new Map<Snowflake, V>();
+export class Cache<T> {
+  private map = new Map<Snowflake, CachedValue<T>>();
+
+  /** The maximum number of items in the cache. */
+  public readonly maxSize?: number;
 
   // Sweeping things
   private swDelay: number;
   private swInt?: number | NodeJS.Timer;
 
-  private fetcher?: (id: Snowflake) => MaybePromise<V>;
-  private sweeper?: (cache: CacheManager<V>, id: Snowflake, data: V) => boolean;
+  private fetcher?: (id: Snowflake) => MaybePromise<Maybe<T>>;
+  private sweeper?: Sweeper<T>;
 
-  public constructor(config?: CacheManagerConfig<V>) {
+  public constructor(config?: CacheConfig<T>) {
+    this.maxSize = config?.maxSize;
     this.fetcher = config?.fetch;
     this.sweeper = config?.sweeper;
     this.swDelay = config?.sweepInterval ?? 3600000;
@@ -43,7 +60,7 @@ export class CacheManager<V> {
   }
 
   /** The current number of items in the cache. */
-  get size() {
+  public get size() {
     return this.map.size;
   }
 
@@ -77,7 +94,7 @@ export class CacheManager<V> {
   }
 
   /**
-   * Gets the structure stored in the cache manager by ID.
+   * Gets the structure stored in the cache by ID.
    *
    * @param id The ID of the structure to get.
    * @returns The structure found, undefined otherwise.
@@ -92,10 +109,22 @@ export class CacheManager<V> {
    *
    * @param id The ID of the structure.
    * @param data The structure to put.
-   * @returns The cache manager.
+   * @returns The cache.
    */
-  public put(id: Snowflake, data: V) {
-    this.map.set(id, data);
+  public put(id: Snowflake, data: T) {
+    if (this.maxSize && this.size >= this.maxSize && !this.map.get(id)) {
+      for (const [k, v] of this.map.entries()) {
+        // If there is a sweeper, check with it to make sure it's OK to delete.
+        const shouldDelete = this.sweeper ? this.sweeper(this, k, v) : true;
+        if (shouldDelete) {
+          this.map.delete(k);
+          this.map.set(id, new CachedValue(data));
+          break;
+        }
+      }
+    } else {
+      this.map.set(id, this.map.get(id)?.write(data) ?? new CachedValue(data));
+    }
     return this;
   }
 
@@ -108,27 +137,27 @@ export class CacheManager<V> {
    * @param data The structure to put.
    * @returns The object that in the end is stored in the cache.
    */
-  public putIfNotExists(id: Snowflake, data: V) {
+  public putIfNotExists(id: Snowflake, data: T) {
     const cached = this.map.get(id);
     if (cached) return cached;
 
-    this.map.set(id, data);
+    this.put(id, data);
     return data;
   }
 
   /**
-   * Gets the structure stored in the cache manager by ID. If it is not cached,
-   * it will be fetched and saved to the cache for future use.
+   * Gets the structure stored in the cache by ID. If it is not cached, it will
+   * be fetched and saved to the cache for future use.
    *
    * @param id The ID of the structure to get/fetch.
    * @returns The structure that was either fetched or retrieved from the cache.
    */
   public async fetch(id: Snowflake) {
     const cached = this.map.get(id);
-    if (cached || !this.fetcher) return cached;
+    if (cached || !this.fetcher) return cached?.read();
 
     const data = await this.fetcher(id);
-    this.put(id, data);
+    if (data) this.put(id, data);
     return data;
   }
 }

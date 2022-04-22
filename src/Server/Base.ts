@@ -1,21 +1,17 @@
 import { APIWrapper } from "../API";
 import { GlobalCacheManager } from "../Cache";
-import { CommandManager, ComponentManager } from "../Managers";
-import {
-  ApplicationCommandInteraction,
-  AutocompleteInteraction,
-  Interaction,
-  MessageComponentInteraction
-} from "../Structures";
+import { CommandManager } from "../Managers";
 import type {
   APIApplication as App,
-  APIInteraction as RawInteraction,
-  APIInteractionResponse as RawResponse
+  APIInteraction,
+  APIInteractionResponse as Response
 } from "../Types";
+import { InteractionType as Type } from "../Types";
+import { Errors } from "../Utils";
 import type { BaseServerConfig } from "./Types";
 
 /** Base interaction server that other server types all extend. */
-export class BaseServer<T = BaseServerConfig> {
+export abstract class BaseServer<T = BaseServerConfig> {
   /** The API manager of the server that interfaces with the Discord HTTP API */
   public readonly api: APIWrapper;
   /** The server's global cache, that keeps all data it receives. */
@@ -23,14 +19,14 @@ export class BaseServer<T = BaseServerConfig> {
 
   // Interaction managers
   public readonly command = new CommandManager();
-  public readonly component = new ComponentManager();
+  // public readonly component = new ComponentManager();
 
   // Shorthands
   public readonly slash = this.command.slash;
 
   public constructor(config: BaseServerConfig & T) {
     this.api = new APIWrapper(config.token);
-    this.cache = new GlobalCacheManager(this.api);
+    this.cache = new GlobalCacheManager(this);
 
     if (config.registerCommands !== false && config.token)
       setTimeout(this.registerCommands, config.registerCommands ?? 10000);
@@ -56,23 +52,17 @@ export class BaseServer<T = BaseServerConfig> {
    * @param d The raw interaction data to be processed.
    * @returns The interaction response (that is sent as an HTTP response).
    */
-  protected async handleInteraction(d: RawInteraction): Promise<RawResponse> {
-    let interactionType = Interaction;
+  protected async handleInteraction(d: APIInteraction): Promise<Response> {
+    switch (d.type) {
+      case Type.Ping:
+        return { type: 1 };
 
-    if (d.type === 2) interactionType = ApplicationCommandInteraction;
-    if (d.type === 3) interactionType = MessageComponentInteraction;
-    if (d.type === 4) interactionType = AutocompleteInteraction;
-    if (d.type === 5) console; // temp
-
-    const i = new interactionType(this.api, d);
-
-    if (i.isPing()) return { type: 1 };
-    if (i.isApplicationCommand()) return this.command.execute(i);
-    if (i.isMessageComponent()) return this.component.execute(i);
-    if (i.isApplicationCommandAutocomplete()) return this.command.complete(i);
-    if (i.isModalSubmit()) console; // temp
-
-    // Default for unimplemented interaction types
-    return { type: 4, data: { content: "httpcord: unknown interaction type" } };
+      case Type.ApplicationCommand:
+      case Type.MessageComponent:
+      case Type.ApplicationCommandAutocomplete:
+      case Type.ModalSubmit:
+      default:
+        return Errors.UNKNOWN_INTERACTION;
+    }
   }
 }

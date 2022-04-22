@@ -1,13 +1,14 @@
 import { sleep } from "../Utils";
-import { CacheManager } from "./Manager";
+import { Cache } from "./Cache";
 
-describe("CacheManager", () => {
-  let manager: CacheManager<string>;
+describe("Cache", () => {
+  let manager: Cache<string>;
 
   beforeEach(
     () =>
-      (manager = new CacheManager({
+      (manager = new Cache({
         fetch: jest.fn((id: string) => id),
+        maxSize: 1,
       }))
   );
 
@@ -47,17 +48,28 @@ describe("CacheManager", () => {
 
   it("Can fetch and cache values", async () => {
     expect(manager.size).toBe(0);
-    expect(await manager.fetch("testing")).toBe("testing");
+    expect(await manager.fetch("123456")).toBe("123456");
     expect(manager["fetcher"]).toBeCalledTimes(1);
     expect(manager.size).toBe(1);
-    expect(manager.get("testing")).toBe("testing");
+    expect(manager.get("123456")).toBe("123456");
     expect(manager["fetcher"]).toBeCalledTimes(1);
     expect(manager.size).toBe(1);
   });
 
+  it("Does not put items over the max size", () => {
+    expect(manager.get("123456")).toBeUndefined();
+    expect(manager.size).toBe(0);
+    manager.put("123456", "some value");
+    expect(manager.get("123456")).toBe("some value");
+    expect(manager.size).toBe(1);
+    manager.put("789", "some other value");
+    expect(manager.get("123456")).toBeUndefined();
+    expect(manager.size).toBe(1);
+  });
+
   it("Can't fetch if there's no fetcher", async () => {
-    const noFetchManager = new CacheManager<string>();
-    expect(await noFetchManager.fetch("testing")).toBeUndefined();
+    const noFetchManager = new Cache<string>();
+    expect(await noFetchManager.fetch("123456")).toBeUndefined();
   });
 
   it("Does not fetch values already present in cache", async () => {
@@ -75,7 +87,7 @@ describe("CacheManager", () => {
   });
 
   it("Does not sweep when there is no sweeper", async () => {
-    const sweepingManager = new CacheManager<string>({ sweepInterval: 100 });
+    const sweepingManager = new Cache<string>({ sweepInterval: 100 });
 
     sweepingManager.put("123", "some value");
     sweepingManager.startSweeping();
@@ -85,7 +97,7 @@ describe("CacheManager", () => {
 
   it("Can sweep manually", () => {
     const sweeper = jest.fn((_, key: string) => key === "123");
-    const sweepingManager = new CacheManager<string>({
+    const sweepingManager = new Cache<string>({
       sweeper,
       sweepInterval: 0,
     });
@@ -103,7 +115,7 @@ describe("CacheManager", () => {
 
   it("Can sweep automatically", async () => {
     const sweeper = jest.fn((_, key: string) => key === "123");
-    const sweepingManager = new CacheManager<string>({
+    const sweepingManager = new Cache<string>({
       sweeper,
       sweepInterval: 500,
     });
