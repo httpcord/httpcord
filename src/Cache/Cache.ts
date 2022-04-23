@@ -1,6 +1,9 @@
 import type { Maybe, MaybePromise, Snowflake } from "../Types";
 import { CachedValue } from "./Value";
 
+/** Represents a cache fetcher function. */
+export type Fetcher<T> = (id: Snowflake) => MaybePromise<Maybe<T>>;
+
 /** Represents a cache sweeper function. */
 export type Sweeper<T> = (
   cache: Cache<T>,
@@ -11,7 +14,7 @@ export type Sweeper<T> = (
 /** Represents the configuration for a cache. */
 export interface CacheConfig<T> {
   /** A function that can fetch a structure for a cache. */
-  fetch?: (id: Snowflake) => MaybePromise<Maybe<T>>;
+  fetch?: Fetcher<T>;
 
   /**
    * A function that runs when an item is considered to be deleted internally.
@@ -46,7 +49,7 @@ export class Cache<T> {
   private swDelay: number;
   private swInt?: number | NodeJS.Timer;
 
-  private fetcher?: (id: Snowflake) => MaybePromise<Maybe<T>>;
+  private fetcher?: Fetcher<T>;
   private sweeper?: Sweeper<T>;
 
   public constructor(config?: CacheConfig<T>) {
@@ -100,7 +103,7 @@ export class Cache<T> {
    * @returns The structure found, undefined otherwise.
    */
   public get(id: Snowflake) {
-    return this.map.get(id);
+    return this.map.get(id)?.read();
   }
 
   /**
