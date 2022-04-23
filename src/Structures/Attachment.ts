@@ -1,24 +1,35 @@
-import type { APIAttachment } from "../Types";
+import type { APIAttachment, Snowflake } from "../Types";
 import type { ServerLike } from "./Base";
 import { Structure } from "./Base";
 
+/** Represents an attachment object from Discord. */
 export class Attachment extends Structure {
-  id: string;
-  name: string;
-  description?: string;
-  type?: `${string}/${string}`;
-  size: number;
-  url: string;
-  proxyURL: string;
+  /** The ID of the attachment. */
+  public readonly id: Snowflake;
+  /** The file name of the attachment. */
+  public readonly name: string;
+  /** The caption of the attachment, used by screen readers. */
+  public readonly description?: string;
+  /** The mime type of the attachment. */
+  public readonly type?: `${string}/${string}`;
+  /** The size of the attachment in bytes. */
+  public readonly size: number;
+  /** The source URL of the attachment. */
+  public readonly url: string;
+  /** A proxied URL of the attachment. */
+  public readonly proxyURL: string;
 
-  height?: number;
-  width?: number;
-  ephemeral = false;
+  /** If the attachment is an image, the height of the image. */
+  public readonly height?: number;
+  /** If the attachment is an image, the width of the image. */
+  public readonly width?: number;
+  /** If true, the attachment will be deleted from Discord's servers soon. */
+  public readonly ephemeral: boolean = false;
 
   constructor(server: ServerLike, data: APIAttachment) {
     super(server);
 
-    this.id = data.id;
+    this.id = data.id as Snowflake;
     this.name = data.filename;
     this.description = data.description;
     this.type = data.content_type as `${string}/${string}`;
@@ -28,6 +39,6 @@ export class Attachment extends Structure {
 
     this.height = data.height ?? undefined;
     this.width = data.width ?? undefined;
-    this.ephemeral = !!data.ephemeral;
+    this.ephemeral = data.ephemeral ?? false;
   }
 }
