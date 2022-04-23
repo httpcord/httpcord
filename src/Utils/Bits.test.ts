@@ -1,7 +1,7 @@
 import { Bits } from "./Bits";
 
-describe("Utils/Bits", () => {
-  describe("Utils/Bits/Statics", () => {
+describe("Bits", () => {
+  describe("Statics", () => {
     // Conversion
     // These come first as next methods will call the conversion themselves also.
 

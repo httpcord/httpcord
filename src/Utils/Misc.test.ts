@@ -1,6 +1,6 @@
 import { areArraysEqualSets, sleep } from "./Misc";
 
-describe("Utils/Misc/Sleep", () => {
+describe("sleep", () => {
   const marginOfError = 10;
   const currentTime = "performance" in globalThis ? performance.now : Date.now;
 
@@ -14,7 +14,7 @@ describe("Utils/Misc/Sleep", () => {
   });
 });
 
-describe("Utils/Misc/AreArraysEqualSets", () => {
+describe("areArraysEqualSets", () => {
   // These should all be true
 
   it("Can identify two arrays as equal", () => {

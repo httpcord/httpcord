@@ -1,6 +1,6 @@
 import { RequiresToken } from "./Decorators";
 
-describe("Utils/Decorators/RequiresToken", () => {
+describe("RequiresToken", () => {
   const testObject = { call: jest.fn(), api: { hasToken: false } };
   const testDescriptor = Object.getOwnPropertyDescriptor(testObject, "call")!;
 

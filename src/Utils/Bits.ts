@@ -6,7 +6,7 @@ export class Bits {
   protected static DefaultBit = BigInt(0);
 
   /** The possible values of the bits. */
-  public static Flags: { [key: string]: bigint };
+  public static Flags: { [key: string]: BitLike };
 
   /** The raw bit number of the bits. */
   public bits: bigint;
