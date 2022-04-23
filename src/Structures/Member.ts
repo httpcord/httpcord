@@ -90,4 +90,9 @@ export class Member extends Structure {
       headers: data.reason ? { "X-Audit-Log-Reason": data.reason } : undefined,
     });
   }
+
+  /** Returns the string representation of the member (as a mention). */
+  public toString() {
+    return `<@${this.id}>`;
+  }
 }

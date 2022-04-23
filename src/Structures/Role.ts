@@ -1,8 +1,8 @@
-import type { APIRole, Snowflake } from "../../Types";
-import type { ServerLike } from "../Base";
-import { Structure } from "../Base";
-import { Permissions } from "../Permissions";
-import type { AbstractGuild } from "./Abstract";
+import type { APIRole, Snowflake } from "../Types";
+import type { ServerLike } from "./Base";
+import { Structure } from "./Base";
+import type { AbstractGuild } from "./Guild/Abstract";
+import { Permissions } from "./Permissions";
 
 // This object does not have a "Abstract" counterpart because roles are always
 // received full. See "Resolved Data Structure" under "Receiving and Responding"
@@ -23,37 +23,26 @@ interface RoleTags {
 export class Role extends Structure {
   /** The guild that the role belongs to. */
   public readonly guild: AbstractGuild;
-
   /** The unique ID of this role (same as Guild ID if it's @everyone) */
   public readonly id: Snowflake;
-
   /** The name of the role. */
   public readonly name: string;
-
   /** The number representation of the hex color code of this role. */
   public readonly color: number;
-
   /** True if the guild is hoisted (displayed above others in member list). */
   public readonly hoisted: boolean;
-
   /** The position of the guild. */
   public readonly position: number;
-
   /** The permissions of this role. */
   public readonly permissions: Permissions;
-
   /** Whether or not this role is managed by an integration. */
   public readonly managed: boolean;
-
   /** Whether or not this role is mentionable. */
   public readonly mentionable: boolean;
-
   /** The hash of the role's icon, if any. */
   public readonly icon?: string;
-
   /** The emoji associated with the role, if any. */
   public readonly emoji?: string;
-
   /** The tags of the role, if any. */
   public readonly tags?: RoleTags;
 

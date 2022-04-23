@@ -1,6 +1,23 @@
+import type { Snowflake } from "../Types";
 import { PermissionFlagsBits } from "../Types";
 import { Bits } from "../Utils";
 
+/** Represents a permission overwrite object, typically found on a channel. */
+export interface PermissionOverwrite {
+  /** The ID of the subject (either a Role or a Member). */
+  id: Snowflake;
+
+  /** The type of the overwrite: 0 for a role or 1 for a member. */
+  type: 0 | 1;
+
+  /** The permissions set to "allow". */
+  allow: Permissions;
+
+  /** The permissions set to "deny". */
+  deny: Permissions;
+}
+
+/** Represents a permissions object in Discord. */
 export class Permissions extends Bits {
   protected static DefaultBit = BigInt(104324673);
   public static Flags = PermissionFlagsBits;

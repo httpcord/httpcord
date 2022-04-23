@@ -1,8 +1,9 @@
-import type { APIUser, Snowflake } from "../Types";
-import { UserFlags } from "../Types";
+import type { APIDMChannel, APIUser, Snowflake } from "../Types";
+import { Routes, UserFlags } from "../Types";
 import { Bits, RequiresToken } from "../Utils";
 import type { ServerLike } from "./Base";
 import { Structure } from "./Base";
+import { DMChannel } from "./Channels";
 
 /** Represents possible flags that a user can have. */
 export class UserFlagBits extends Bits {
@@ -19,16 +20,14 @@ export class User extends Structure {
   public readonly discriminator: string;
   /** The user's avatar hash. */
   public readonly avatar?: string;
-
   /** Whether the user is a "system" user or not. */
   public readonly system: boolean = false;
   /** Whether the user is a "bot" user or not. */
   public readonly bot: boolean = false;
   /** The user's public flags. */
   public readonly publicFlags: UserFlagBits;
-
   /** Represents the DM channel with the user. */
-  private dmChannel?: null;
+  public channel?: DMChannel;
 
   public constructor(server: ServerLike, data: APIUser) {
     super(server);
@@ -48,7 +47,21 @@ export class User extends Structure {
    */
   @RequiresToken
   public async send(msg: string) {
-    await this.api.post(`/users/@me/channels`);
+    if (!this.channel) this.channel = await this.fetchChannel();
+  }
+
+  /** Fetches the DM channel. */
+  @RequiresToken
+  private async fetchChannel() {
+    const data = (await this.api.post(Routes.userChannels(), {
+      body: { recipient_id: this.id },
+    })) as APIDMChannel;
+    return new DMChannel({ api: this.api, cache: this.globalCache }, data);
+  }
+
+  /** Returns the string representation of the user (as a mention). */
+  public toString() {
+    return `<@${this.id}>`;
   }
 }
 // Utility
