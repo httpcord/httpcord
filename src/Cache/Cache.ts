@@ -72,9 +72,11 @@ export class Cache<T> {
     // Clear the sweep interval if we are sweeping and there is no sweeper func.
     // @ts-expect-error: Stupid NodeJS custom timer object
     if (!this.sweeper && this.swInt) return clearInterval(this.swInt);
+    if (!this.sweeper) return;
 
     this.map.forEach((v, k) => {
-      const shouldDelete = this.sweeper!(this, k, v);
+      if (!this.sweeper) return; // To make typescript happy
+      const shouldDelete = this.sweeper(this, k, v);
       if (shouldDelete) this.map.delete(k);
     });
   }
@@ -142,10 +144,22 @@ export class Cache<T> {
    */
   public putIfNotExists(id: Snowflake, data: T) {
     const cached = this.map.get(id);
-    if (cached) return cached;
+    if (cached) return cached.read();
 
     this.put(id, data);
     return data;
+  }
+
+  /**
+   * Creates a new structure and puts it in the cache.
+   * @param id The ID of the structure.
+   * @param cb A function that creates the structure in the cache
+   * @returns The structure that was either cached or created
+   */
+  public createIfNotExists(id: Snowflake, cb: () => T) {
+    const cached = this.get(id);
+    if (cached) return cached;
+    return this.putIfNotExists(id, cb());
   }
 
   /**

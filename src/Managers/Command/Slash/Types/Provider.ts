@@ -28,9 +28,6 @@ export type UnwrapAll<T> = T extends { [key: string]: Wrap<infer V> }
     }
   : T;
 
-declare const thing: Required<undefined>;
-thing;
-
 // Shorthands to try to not overflow onto multiple lines
 // Hover over one if you are confused (which you will be)
 

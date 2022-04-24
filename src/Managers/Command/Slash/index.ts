@@ -4,6 +4,7 @@ import type {
   ApplicationCommandInteractionResponse as Response,
   RESTPostAPIApplicationCommandsJSONBody
 } from "../../../Types";
+import { err } from "../../../Utils";
 import type { Manager } from "../../Base";
 import { ApplicationChatInputCommand as Command } from "./Structure";
 import type {
@@ -18,16 +19,15 @@ export class ChatInputCommandManager implements Manager<Interaction, Response> {
   public register<T>(config: Config<T>, fn: Callback<T>, acfn?: ACCallback<T>) {
     const command = new Command(config, fn, acfn);
     this.registered.set(command.name, command);
-    return command;
+    return this;
   }
 
   async execute(i: Interaction): Promise<Response> {
-    const flags = 64; // ephemeral
-    return { type: 4, data: { content: "httpcord: unknown command", flags } };
+    return err(4, "unknown command");
   }
 
   async autocomplete(i: IAutocomplete) {
-    return { type: 5, data: { choices: [] } };
+    return err(5, "unknown command");
   }
 
   generateConfig() {

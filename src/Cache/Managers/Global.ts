@@ -1,3 +1,4 @@
+import type { AbstractGuild } from "../../Structures";
 import { Guild, User } from "../../Structures";
 import type { ServerLike } from "../../Structures/Base";
 import type { APIGuild, APIUser, Snowflake } from "../../Types";
@@ -11,7 +12,7 @@ import { Cache } from "../Cache";
  */
 export class GlobalCacheManager {
   /** Represents the global user cache. */
-  public readonly users = new Cache({
+  public readonly users = new Cache<User>({
     fetch: this.fetchUser.bind(this),
     sweeper: sweepAfterMinutes(5, 5), // if >= 5 min since last read/write
     sweepInterval: 15 * 60 * 1000, // 15 minutes
@@ -19,7 +20,7 @@ export class GlobalCacheManager {
   });
 
   /** Represents the global guild cache. */
-  public readonly guilds = new Cache({
+  public readonly guilds = new Cache<AbstractGuild>({
     fetch: this.fetchGuild.bind(this),
     sweeper: sweepAfterMinutes(30, 30), // if >= 30 min since last read/write
     sweepInterval: 30 * 60 * 1000, // 30 minutes

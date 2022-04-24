@@ -35,6 +35,11 @@ describe("Cache", () => {
     expect(manager.size).toBe(1);
   });
 
+  it("Can create values", () => {
+    expect(manager.createIfNotExists("123456", () => "123456")).toBe("123456");
+    expect(manager.createIfNotExists("123456", () => "other")).toBe("123456");
+  });
+
   it("Can clear the cache", () => {
     expect(manager.get("123456")).toBeUndefined();
     expect(manager.size).toBe(0);

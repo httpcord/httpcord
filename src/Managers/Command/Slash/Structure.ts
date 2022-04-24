@@ -8,7 +8,9 @@ import type {
   ApplicationCommandInteractionResponse as Response,
   RESTPostAPIApplicationCommandsJSONBody as CommandData
 } from "../../../Types";
-import { CommandAcknowledgementType } from "../../../Types";
+import {
+  CommandAcknowledgementType
+} from "../../../Types";
 import { err } from "../../../Utils";
 import { ApplicationCommand } from "../Structure";
 import type { Localizations } from "../Types";
