@@ -16,8 +16,7 @@ import type {
   AutocompleteCallback as ACCallback,
   ChatInputCallback as Callback,
   ChatInputCommandConfig as Config,
-  ConfigurableOptions,
-  ResolvedOptions
+  ConfigurableOptions
 } from "./Types";
 import { convert, getFocused, getOptConfig } from "./Utils";
 
@@ -82,8 +81,8 @@ export class ApplicationChatInputCommand<T> extends ApplicationCommand {
       return err(4, "no options were received when some were expected");
     }
 
-    const options = i.options ?? [];
-    const opts: ResolvedOptions<T> = convert<T>(options, this.options.slice(0));
+    const o = i.options ?? [];
+    const opts = convert<T>(o, this.options.slice(0), true);
 
     const ephemeral =
       this.ackBehavior === 1 || (this.ackBehavior === 2 && i.isInGuild());
@@ -110,8 +109,8 @@ export class ApplicationChatInputCommand<T> extends ApplicationCommand {
     }
 
     const options = i.options ?? [];
-    const opts: ResolvedOptions<T> = convert<T>(options, this.options.slice(0));
-    const focused = getFocused(i.options)?.name;
+    const opts = convert<T>(options, this.options.slice(0), false);
+    const focused = getFocused<T>(i.options);
     if (!focused) return err(5, "no option is focused, how are you here?");
 
     this.autocompleteCallback(i, focused, opts);

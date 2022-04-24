@@ -1,6 +1,6 @@
-import { getFocusedOption } from "./Utils";
+import { getFocused } from "./Utils";
 
-describe("getFocusedOption", () => {
+describe("getFocused", () => {
   // Testing options
   const optStr = { type: 3, name: "hello", value: "hi" };
   const optNum = { type: 4, name: "hello", value: 1234 };
@@ -10,27 +10,27 @@ describe("getFocusedOption", () => {
   const optUsrFocus = { ...optUsr, focused: true };
 
   it("Returns undefined when there are no options", () => {
-    expect(getFocusedOption([])).toBeUndefined();
+    expect(getFocused([])).toBeUndefined();
   });
 
   it("Can get a focused string option", () => {
-    expect(getFocusedOption([optNum, optStrFocus])).toBe(optStrFocus);
-    expect(getFocusedOption([optStrFocus, optNum])).toBe(optStrFocus);
+    expect(getFocused([optNum, optStrFocus])).toBe(optStrFocus.name);
+    expect(getFocused([optStrFocus, optNum])).toBe(optStrFocus.name);
   });
 
   it("Can get a focused number option", () => {
-    expect(getFocusedOption([optNumFocus, optStr])).toBe(optNumFocus);
-    expect(getFocusedOption([optStr, optNumFocus])).toBe(optNumFocus);
+    expect(getFocused([optNumFocus, optStr])).toBe(optNumFocus.name);
+    expect(getFocused([optStr, optNumFocus])).toBe(optNumFocus.name);
   });
 
   it("Retrieves the first focused option if there are many", () => {
-    expect(getFocusedOption([optNumFocus, optStrFocus])).toBe(optNumFocus);
-    expect(getFocusedOption([optStrFocus, optNumFocus])).toBe(optStrFocus);
+    expect(getFocused([optNumFocus, optStrFocus])).toBe(optNumFocus.name);
+    expect(getFocused([optStrFocus, optNumFocus])).toBe(optStrFocus.name);
   });
 
   it("Ignores invalid/non-primitive options", () => {
-    expect(getFocusedOption([optUsrFocus])).toBeUndefined();
-    expect(getFocusedOption([optUsrFocus, optStrFocus])).toBe(optStrFocus);
-    expect(getFocusedOption([optUsr, optStrFocus])).toBe(optStrFocus);
+    expect(getFocused([optUsrFocus])).toBeUndefined();
+    expect(getFocused([optUsrFocus, optStrFocus])).toBe(optStrFocus.name);
+    expect(getFocused([optUsr, optStrFocus])).toBe(optStrFocus.name);
   });
 });

@@ -1,8 +1,11 @@
 import type { ChatInputInteraction } from "../../../../Structures";
 import type { CommandAcknowledgementType } from "../../../../Types";
 import type { ApplicationCommandConfig, StringOrLocalized } from "../../Types";
-import type { OptionFactory } from "./Generics";
-import type { UnwrapAll } from "./Provider";
+import type {
+  OptionFactory,
+  ResolvedOptions,
+  WrappedOptions
+} from "./Generics";
 
 // These are the actual consumer chat input types
 
@@ -33,7 +36,7 @@ export type ChatInputCommandConfig<T> = ApplicationCommandConfig<{
 }>;
 
 /** The callback that gets executed when a chat input command is executed. */
-export type ChatInputCallback<T> = (
+export type ChatInputCallback<T extends WrappedOptions<any>> = (
   i: ChatInputInteraction,
-  opts: UnwrapAll<T>
+  opts: ResolvedOptions<T>
 ) => unknown;

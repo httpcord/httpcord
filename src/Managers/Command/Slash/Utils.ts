@@ -1,13 +1,14 @@
 import type {
-  APIApplicationCommandBasicOption as BasicOption,
-  APIApplicationCommandInteractionDataBasicOption as IncomingBasicOption
+  APIApplicationCommandBasicOption as BO,
+  APIApplicationCommandInteractionDataBasicOption as IBO
 } from "../../../Types";
 import { ApplicationCommandOptionType as OptionType } from "../../../Types";
 import type {
   ActualOptions,
   ConfigurableOptions,
   Option,
-  ResolvedOptions
+  ResolvedACKey,
+  ResolvedOptions as R
 } from "./Types";
 import { OptionResolver } from "./Types";
 
@@ -38,7 +39,7 @@ export function getOptConfig(fn: ConfigurableOptions<unknown>) {
       min_value: "minValue" in val ? val.minValue : undefined,
       max_value: "maxValue" in val ? val.maxValue : undefined,
       autocomplete: "autocomplete" in val ? val.autocomplete : undefined,
-    } as BasicOption;
+    } as BO;
   });
 }
 
@@ -50,7 +51,9 @@ export function getOptConfig(fn: ConfigurableOptions<unknown>) {
  * @param c The list of *config* basic options that were sent to Discord.
  * @returns ResolvedOptions
  */
-export function convert<T>(o: IncomingBasicOption[], c: BasicOption[]) {
+export function convert<T>(o: IBO[], c: BO[], r: false): Partial<R<T>>;
+export function convert<T>(o: IBO[], c: BO[], r: true): R<T>;
+export function convert<T>(o: IBO[], c: BO[], r = true) {
   const optConfig = c.sort((f, s) => f.name.localeCompare(s.name));
   const optReceived = o.sort((f, s) => f.name.localeCompare(s.name));
   const options = {};
@@ -66,7 +69,12 @@ export function convert<T>(o: IncomingBasicOption[], c: BasicOption[]) {
     Object.defineProperty(options, name, { value });
   });
 
-  return options as ResolvedOptions<T>;
+  // At this point, if there are still some required opts in config array, it
+  // means that not all have been filled out. Throw error if enabled.
+  if (r && optConfig.some((v) => v.required))
+    throw new Error("some required opts are missing");
+
+  return options as R<T>;
 }
 
 /**
@@ -114,9 +122,10 @@ export function resolveIncomingOptions(opts: ActualOptions) {
   return Object.freeze(options);
 }
 
-/** Gets an option that the user is currently typing, if any. */
-export function getFocused(opts: ActualOptions) {
+/** Gets the option name that the user is currently typing, if any. */
+export function getFocused<T>(opts: ActualOptions) {
   for (const o of opts) {
-    if ((o.type === 3 || o.type === 4) && o.focused) return o;
+    if ((o.type === 3 || o.type === 4) && o.focused)
+      return o.name as ResolvedACKey<T>;
   }
 }

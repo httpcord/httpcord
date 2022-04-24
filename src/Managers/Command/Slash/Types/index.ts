@@ -1,4 +1,4 @@
-export { ConfigurableOptions, ResolvedOptions } from "./Generics";
+export * from "./Generics";
 export { OptionProvider, Unwrap, UnwrapAll } from "./Provider";
 export { OptionResolver } from "./Resolver";
 export { ActualOptions, Mentionable, Option } from "./Utils";
